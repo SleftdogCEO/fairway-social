@@ -63,6 +63,14 @@ type CourseOption = {
   name: string
   city: string | null
   state: string | null
+  parent_club: string | null
+}
+
+type InvitableUser = {
+  id: string
+  full_name: string
+  username: string
+  avatar_url: string | null
 }
 
 type Filter = 'upcoming' | 'my_meetups' | 'past'
@@ -79,9 +87,13 @@ export default function MeetupsPage() {
   const [courses, setCourses] = useState<CourseOption[]>([])
   const [joining, setJoining] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [allUsers, setAllUsers] = useState<InvitableUser[]>([])
+  const [inviteSearch, setInviteSearch] = useState('')
+  const [selectedInvites, setSelectedInvites] = useState<InvitableUser[]>([])
 
   // Create form state
   const [formTitle, setFormTitle] = useState('')
+  const [formClub, setFormClub] = useState('')
   const [formCourseId, setFormCourseId] = useState('')
   const [formDateTime, setFormDateTime] = useState('')
   const [formMaxPlayers, setFormMaxPlayers] = useState(4)
@@ -91,6 +103,7 @@ export default function MeetupsPage() {
     fetchUser()
     fetchMeetups()
     fetchCourses()
+    fetchAllUsers()
   }, [])
 
   async function fetchUser() {
@@ -124,10 +137,19 @@ export default function MeetupsPage() {
   async function fetchCourses() {
     const { data } = await supabase
       .from('courses')
-      .select('id, name, city, state')
+      .select('id, name, city, state, parent_club')
       .order('name', { ascending: true })
 
     if (data) setCourses(data)
+  }
+
+  async function fetchAllUsers() {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, full_name, username, avatar_url')
+      .order('full_name', { ascending: true })
+
+    if (data) setAllUsers(data)
   }
 
   async function handleJoin(meetupId: string) {
@@ -177,7 +199,7 @@ export default function MeetupsPage() {
         course_id: formCourseId || null,
         tee_time: new Date(formDateTime).toISOString(),
         max_players: formMaxPlayers,
-        description: formDescription.trim() || null,
+        description: [formClub && !formCourseId ? `Club: ${formClub}` : '', formDescription.trim()].filter(Boolean).join('\n') || null,
         organizer_id: user.id,
       })
       .select()
@@ -195,12 +217,24 @@ export default function MeetupsPage() {
         .insert({ meetup_id: newMeetup.id, user_id: user.id })
     }
 
+    // Auto-add invited users as attendees
+    if (newMeetup && selectedInvites.length > 0) {
+      const inviteRows = selectedInvites.map(u => ({
+        meetup_id: newMeetup.id,
+        user_id: u.id,
+      }))
+      await supabase.from('meetup_attendees').insert(inviteRows)
+    }
+
     // Reset form
     setFormTitle('')
+    setFormClub('')
     setFormCourseId('')
     setFormDateTime('')
     setFormMaxPlayers(4)
     setFormDescription('')
+    setSelectedInvites([])
+    setInviteSearch('')
     setShowCreate(false)
     setSubmitting(false)
     await fetchMeetups()
@@ -331,35 +365,52 @@ export default function MeetupsPage() {
                     type="text"
                     value={formTitle}
                     onChange={e => setFormTitle(e.target.value)}
-                    placeholder='e.g., "Saturday Morning 18 at Pebble Beach"'
+                    placeholder='e.g., "Sunday Morning at Ibis"'
                     required
                     className="w-full bg-dark-700 border border-dark-600 text-gray-100 placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
                   />
                 </div>
 
-                {/* Course */}
+                {/* Club / Course selection */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                    Course
+                    Golf Club or Course
                   </label>
+                  {/* Club name (free text for clubs like Ibis, PGA National, etc.) */}
+                  <input
+                    type="text"
+                    value={formClub}
+                    onChange={e => setFormClub(e.target.value)}
+                    placeholder='e.g., "Ibis Golf & Country Club"'
+                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors mb-2"
+                  />
+                  {/* Sub-course from DB or free text */}
                   <select
                     value={formCourseId}
                     onChange={e => setFormCourseId(e.target.value)}
                     className="w-full bg-dark-700 border border-dark-600 text-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors appearance-none"
                   >
-                    <option value="">Select a course...</option>
-                    {courses.map(course => (
-                      <option key={course.id} value={course.id}>
-                        {course.name}{course.city ? ` - ${course.city}` : ''}{course.state ? `, ${course.state}` : ''}
-                      </option>
-                    ))}
+                    <option value="">Select specific course (optional)...</option>
+                    {courses
+                      .filter(c => !formClub || c.name.toLowerCase().includes(formClub.toLowerCase()) || c.parent_club?.toLowerCase().includes(formClub.toLowerCase()))
+                      .map(course => (
+                        <option key={course.id} value={course.id}>
+                          {course.name}{course.city ? ` - ${course.city}` : ''}{course.state ? `, ${course.state}` : ''}
+                        </option>
+                      ))}
+                    {courses.filter(c => !formClub || c.name.toLowerCase().includes(formClub.toLowerCase()) || c.parent_club?.toLowerCase().includes(formClub.toLowerCase())).length === 0 && (
+                      <option value="" disabled>No matching courses found</option>
+                    )}
                   </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Type the club name, then pick the specific course if applicable
+                  </p>
                 </div>
 
                 {/* Date & Time */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                    Date & Time
+                    Tee Time
                   </label>
                   <input
                     type="datetime-local"
@@ -373,29 +424,126 @@ export default function MeetupsPage() {
                 {/* Max Players */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                    Max Players
+                    Group Size
                   </label>
+                  <div className="flex gap-2">
+                    {[2, 3, 4, 5, 6, 8].map(n => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setFormMaxPlayers(n)}
+                        className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                          formMaxPlayers === n
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-dark-700 text-gray-400 hover:text-white hover:bg-dark-600 border border-dark-600'
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Number of players</p>
+                </div>
+
+                {/* Invite Players */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                    Invite Players
+                    <span className="text-gray-500 font-normal ml-1">(optional)</span>
+                  </label>
+
+                  {/* Selected invites */}
+                  {selectedInvites.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {selectedInvites.map(u => (
+                        <span
+                          key={u.id}
+                          className="inline-flex items-center gap-1.5 bg-emerald-900/40 text-emerald-300 border border-emerald-800/50 px-3 py-1.5 rounded-full text-xs font-medium"
+                        >
+                          <span className="w-5 h-5 rounded-full bg-emerald-800 flex items-center justify-center text-[10px] font-bold text-emerald-300 flex-shrink-0">
+                            {u.full_name?.charAt(0)?.toUpperCase() || '?'}
+                          </span>
+                          {u.full_name}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedInvites(prev => prev.filter(p => p.id !== u.id))}
+                            className="ml-0.5 text-emerald-400 hover:text-red-400 transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Search input */}
                   <input
-                    type="number"
-                    min={2}
-                    max={8}
-                    value={formMaxPlayers}
-                    onChange={e => setFormMaxPlayers(Number(e.target.value))}
-                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
+                    type="text"
+                    value={inviteSearch}
+                    onChange={e => setInviteSearch(e.target.value)}
+                    placeholder="Search by name or username..."
+                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Between 2 and 8 players</p>
+
+                  {/* Search results dropdown */}
+                  {inviteSearch.trim().length > 0 && (
+                    <div className="mt-1 bg-dark-700 border border-dark-600 rounded-xl overflow-hidden max-h-40 overflow-y-auto">
+                      {allUsers
+                        .filter(u =>
+                          u.id !== user?.id &&
+                          !selectedInvites.some(s => s.id === u.id) &&
+                          (u.full_name.toLowerCase().includes(inviteSearch.toLowerCase()) ||
+                           u.username.toLowerCase().includes(inviteSearch.toLowerCase()))
+                        )
+                        .slice(0, 5)
+                        .map(u => (
+                          <button
+                            key={u.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedInvites(prev => [...prev, u])
+                              setInviteSearch('')
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-dark-600 transition-colors text-left"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-emerald-900/50 flex items-center justify-center flex-shrink-0 overflow-hidden border border-emerald-800/50">
+                              {u.avatar_url ? (
+                                <img src={u.avatar_url} alt={u.full_name} className="w-full h-full object-cover" />
+                              ) : (
+                                <span className="text-emerald-400 font-semibold text-xs">
+                                  {u.full_name?.charAt(0)?.toUpperCase() || '?'}
+                                </span>
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-200 font-medium">{u.full_name}</p>
+                              <p className="text-xs text-gray-500">@{u.username}</p>
+                            </div>
+                            <Plus className="w-4 h-4 text-emerald-400 ml-auto" />
+                          </button>
+                        ))}
+                      {allUsers.filter(u =>
+                        u.id !== user?.id &&
+                        !selectedInvites.some(s => s.id === u.id) &&
+                        (u.full_name.toLowerCase().includes(inviteSearch.toLowerCase()) ||
+                         u.username.toLowerCase().includes(inviteSearch.toLowerCase()))
+                      ).length === 0 && (
+                        <p className="px-4 py-3 text-sm text-gray-500">No users found</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Description */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                    Description / Notes
+                    Notes
                     <span className="text-gray-500 font-normal ml-1">(optional)</span>
                   </label>
                   <textarea
                     value={formDescription}
                     onChange={e => setFormDescription(e.target.value)}
-                    placeholder="Casual round, all skill levels welcome..."
+                    placeholder="Casual round, cart included, meet at the clubhouse..."
                     rows={3}
                     className="w-full bg-dark-700 border border-dark-600 text-gray-100 placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors resize-none"
                   />

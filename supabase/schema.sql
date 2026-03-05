@@ -44,6 +44,7 @@ create policy "Users can insert their own profile"
 create table public.courses (
   id uuid default uuid_generate_v4() primary key,
   name text not null,
+  parent_club text, -- For clubs with multiple courses (e.g., Ibis -> Tradition, Heritage, Legend)
   address text,
   city text,
   state text,
@@ -479,3 +480,18 @@ create policy "Listing images are publicly accessible"
 create policy "Users can upload listing images"
   on storage.objects for insert
   with check (bucket_id = 'listings' and auth.uid()::text = (storage.foldername(name))[1]);
+
+-- ============================================
+-- SEED DATA: Sample courses
+-- ============================================
+insert into public.courses (name, parent_club, city, state, lat, lng, holes, par) values
+  ('Tradition Course', 'Ibis Golf & Country Club', 'West Palm Beach', 'FL', 26.8420, -80.1560, 18, 72),
+  ('Heritage Course', 'Ibis Golf & Country Club', 'West Palm Beach', 'FL', 26.8420, -80.1560, 18, 72),
+  ('Legend Course', 'Ibis Golf & Country Club', 'West Palm Beach', 'FL', 26.8420, -80.1560, 18, 72),
+  ('Champion Course', 'PGA National Resort', 'Palm Beach Gardens', 'FL', 26.8335, -80.1340, 18, 72),
+  ('Fazio Course', 'PGA National Resort', 'Palm Beach Gardens', 'FL', 26.8335, -80.1340, 18, 72),
+  ('Palmer Course', 'PGA National Resort', 'Palm Beach Gardens', 'FL', 26.8335, -80.1340, 18, 72),
+  ('Banyan Cay Resort & Golf', null, 'West Palm Beach', 'FL', 26.7153, -80.0857, 18, 70),
+  ('The Park West Palm', null, 'West Palm Beach', 'FL', 26.7450, -80.1230, 18, 72),
+  ('Okeeheelee Golf Course', null, 'West Palm Beach', 'FL', 26.6530, -80.1470, 27, 72),
+  ('Madison Green Golf Club', null, 'Royal Palm Beach', 'FL', 26.7020, -80.2290, 18, 72);

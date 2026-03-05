@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Activity, ShoppingBag, Users, Camera, Trophy, MapPin } from 'lucide-react'
+import { GolfCarousel } from '@/components/golf-carousel'
 
 export default function HomePage() {
   return (
@@ -46,6 +47,9 @@ export default function HomePage() {
           </div>
         </div>
       </header>
+
+      {/* Gorgeous Golf Course Carousel */}
+      <GolfCarousel />
 
       {/* Features */}
       <section id="features" className="mx-auto max-w-7xl px-6 py-24">
