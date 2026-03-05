@@ -245,7 +245,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
       </div>
     );
@@ -253,25 +253,25 @@ export default function ProfilePage() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Unable to load profile. Please sign in.</p>
+      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
+        <p className="text-gray-400">Unable to load profile. Please sign in.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dark-950">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Header */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+        <div className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 overflow-hidden mb-6">
           {/* Cover / Banner */}
-          <div className="h-32 bg-gradient-to-r from-emerald-500 to-emerald-700" />
+          <div className="h-32 bg-gradient-to-r from-dark-900 via-emerald-950 to-dark-800" />
 
           <div className="px-6 pb-6">
             {/* Avatar Row */}
             <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-12">
               <div className="relative group">
-                <div className="w-24 h-24 rounded-full border-4 border-white bg-emerald-100 overflow-hidden shadow-lg">
+                <div className="w-24 h-24 rounded-full border-4 border-dark-800 bg-emerald-100 overflow-hidden shadow-lg">
                   {profile.avatar_url ? (
                     <img
                       src={profile.avatar_url}
@@ -310,15 +310,15 @@ export default function ProfilePage() {
                         setFormData((prev) => ({ ...prev, full_name: e.target.value }))
                       }
                       placeholder="Full Name"
-                      className="text-2xl font-bold border-b-2 border-emerald-500 focus:outline-none bg-transparent px-1"
+                      className="text-2xl font-bold border-b-2 border-emerald-500 focus:outline-none bg-transparent px-1 text-white"
                     />
                   </div>
                 ) : (
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-2xl font-bold text-white">
                     {profile.full_name ?? 'Set your name'}
                   </h1>
                 )}
-                <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-gray-500">
+                <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-gray-400">
                   {profile.username && <span>@{profile.username}</span>}
                   {profile.handicap != null && (
                     <span className="inline-flex items-center gap-1">
@@ -348,7 +348,7 @@ export default function ProfilePage() {
                     </button>
                     <button
                       onClick={() => setEditing(false)}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 border border-dark-600 text-gray-300 rounded-lg hover:bg-dark-700 transition-colors font-medium text-sm"
                     >
                       <X className="w-4 h-4" />
                       Cancel
@@ -357,7 +357,7 @@ export default function ProfilePage() {
                 ) : (
                   <button
                     onClick={() => setEditing(true)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-dark-600 text-gray-300 rounded-lg hover:bg-dark-700 transition-colors font-medium text-sm"
                   >
                     <Edit2 className="w-4 h-4" />
                     Edit Profile
@@ -370,7 +370,7 @@ export default function ProfilePage() {
             {editing && (
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Username</label>
                   <input
                     type="text"
                     value={formData.username}
@@ -378,11 +378,11 @@ export default function ProfilePage() {
                       setFormData((prev) => ({ ...prev, username: e.target.value }))
                     }
                     placeholder="username"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Handicap</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Handicap</label>
                   <input
                     type="number"
                     step="0.1"
@@ -391,11 +391,11 @@ export default function ProfilePage() {
                       setFormData((prev) => ({ ...prev, handicap: e.target.value }))
                     }
                     placeholder="e.g., 12.5"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Home Course</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Home Course</label>
                   <input
                     type="text"
                     value={formData.home_course}
@@ -403,11 +403,11 @@ export default function ProfilePage() {
                       setFormData((prev) => ({ ...prev, home_course: e.target.value }))
                     }
                     placeholder="Your home course"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Location</label>
                   <input
                     type="text"
                     value={formData.location}
@@ -415,11 +415,11 @@ export default function ProfilePage() {
                       setFormData((prev) => ({ ...prev, location: e.target.value }))
                     }
                     placeholder="City, State"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Occupation</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Occupation</label>
                   <input
                     type="text"
                     value={formData.occupation}
@@ -427,11 +427,11 @@ export default function ProfilePage() {
                       setFormData((prev) => ({ ...prev, occupation: e.target.value }))
                     }
                     placeholder="What you do"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Company</label>
                   <input
                     type="text"
                     value={formData.company}
@@ -439,11 +439,11 @@ export default function ProfilePage() {
                       setFormData((prev) => ({ ...prev, company: e.target.value }))
                     }
                     placeholder="Where you work"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Bio</label>
                   <textarea
                     rows={3}
                     value={formData.bio}
@@ -451,11 +451,11 @@ export default function ProfilePage() {
                       setFormData((prev) => ({ ...prev, bio: e.target.value }))
                     }
                     placeholder="Tell other golfers about yourself..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm resize-none"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500 resize-none"
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">LinkedIn URL</label>
                   <input
                     type="url"
                     value={formData.linkedin_url}
@@ -463,7 +463,7 @@ export default function ProfilePage() {
                       setFormData((prev) => ({ ...prev, linkedin_url: e.target.value }))
                     }
                     placeholder="https://linkedin.com/in/yourname"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                   />
                 </div>
               </div>
@@ -471,12 +471,12 @@ export default function ProfilePage() {
 
             {/* Bio (non-edit mode) */}
             {!editing && profile.bio && (
-              <p className="mt-4 text-gray-600 text-sm">{profile.bio}</p>
+              <p className="mt-4 text-gray-400 text-sm">{profile.bio}</p>
             )}
 
             {/* Professional Info (non-edit mode) */}
             {!editing && (profile.occupation || profile.company || profile.linkedin_url) && (
-              <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-400">
                 {(profile.occupation || profile.company) && (
                   <span className="inline-flex items-center gap-1">
                     <Briefcase className="w-3.5 h-3.5" />
@@ -501,38 +501,38 @@ export default function ProfilePage() {
 
         {/* Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <div className="bg-dark-700 rounded-xl shadow-sm border border-dark-700 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">{totalRounds}</div>
-            <div className="text-sm text-gray-500 mt-0.5">Total Rounds</div>
+            <div className="text-sm text-gray-400 mt-0.5">Total Rounds</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <div className="bg-dark-700 rounded-xl shadow-sm border border-dark-700 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">
               {averageScore > 0 ? averageScore : '--'}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">Avg Score</div>
+            <div className="text-sm text-gray-400 mt-0.5">Avg Score</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <div className="bg-dark-700 rounded-xl shadow-sm border border-dark-700 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">
               {bestScore > 0 && bestScore < Infinity ? bestScore : '--'}
             </div>
-            <div className="text-sm text-gray-500 mt-0.5">Best Score</div>
+            <div className="text-sm text-gray-400 mt-0.5">Best Score</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <div className="bg-dark-700 rounded-xl shadow-sm border border-dark-700 p-4 text-center">
             <div className="text-2xl font-bold text-emerald-600">{connectionsCount}</div>
-            <div className="text-sm text-gray-500 mt-0.5">Connections</div>
+            <div className="text-sm text-gray-400 mt-0.5">Connections</div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 bg-white rounded-xl shadow-sm border border-gray-200 p-1 mb-6">
+        <div className="flex items-center gap-1 bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-1 mb-6">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'bg-emerald-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-500'
+                  : 'text-gray-400 hover:text-white border border-transparent'
               }`}
             >
               {tab.key === 'rounds' && <Flag className="w-4 h-4" />}
@@ -543,8 +543,8 @@ export default function ProfilePage() {
                 <span
                   className={`px-1.5 py-0.5 text-xs rounded-full font-semibold ${
                     activeTab === tab.key
-                      ? 'bg-white/20 text-white'
-                      : 'bg-gray-200 text-gray-600'
+                      ? 'bg-emerald-900/50 text-emerald-400'
+                      : 'bg-dark-700 text-gray-400'
                   }`}
                 >
                   {tab.count}
@@ -560,28 +560,28 @@ export default function ProfilePage() {
           {activeTab === 'rounds' && (
             <>
               {rounds.length === 0 ? (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                  <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <h3 className="text-lg font-semibold text-gray-600 mb-1">No rounds logged</h3>
-                  <p className="text-gray-400 text-sm">Start tracking your rounds to see stats here.</p>
+                <div className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-12 text-center">
+                  <Trophy className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-gray-400 mb-1">No rounds logged</h3>
+                  <p className="text-gray-500 text-sm">Start tracking your rounds to see stats here.</p>
                 </div>
               ) : (
                 rounds.map((round) => (
                   <div
                     key={round.id}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-center justify-between"
+                    className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-4 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center">
-                        <span className="text-lg font-bold text-emerald-700">
+                      <div className="w-12 h-12 rounded-lg bg-emerald-900/30 flex items-center justify-center">
+                        <span className="text-lg font-bold text-emerald-400">
                           {round.score ?? '--'}
                         </span>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">
+                        <h4 className="font-semibold text-white">
                           {round.courses?.name ?? 'Unknown Course'}
                         </h4>
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
+                        <div className="flex items-center gap-3 text-sm text-gray-400">
                           {round.tee_time && (
                             <span>
                               {new Date(round.tee_time).toLocaleDateString('en-US', {
@@ -597,7 +597,7 @@ export default function ProfilePage() {
                     </div>
                     <button
                       onClick={() => handleDeleteRound(round.id)}
-                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
                       title="Delete round"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -612,20 +612,20 @@ export default function ProfilePage() {
           {activeTab === 'posts' && (
             <>
               {posts.length === 0 ? (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                  <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <h3 className="text-lg font-semibold text-gray-600 mb-1">No posts yet</h3>
-                  <p className="text-gray-400 text-sm">Share your golf experiences with the community.</p>
+                <div className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-12 text-center">
+                  <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-gray-400 mb-1">No posts yet</h3>
+                  <p className="text-gray-500 text-sm">Share your golf experiences with the community.</p>
                 </div>
               ) : (
                 posts.map((post) => (
                   <div
                     key={post.id}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-4"
+                    className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-4"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <p className="text-gray-800">{post.content}</p>
+                        <p className="text-gray-200">{post.content}</p>
                         {post.image_urls && post.image_urls.length > 0 && (
                           <img
                             src={post.image_urls[0]}
@@ -633,7 +633,7 @@ export default function ProfilePage() {
                             className="mt-3 rounded-lg max-h-64 object-cover"
                           />
                         )}
-                        <div className="flex items-center gap-3 mt-3 text-sm text-gray-400">
+                        <div className="flex items-center gap-3 mt-3 text-sm text-gray-500">
                           {post.created_at && (
                             <span>
                               {new Date(post.created_at).toLocaleDateString('en-US', {
@@ -650,7 +650,7 @@ export default function ProfilePage() {
                       </div>
                       <button
                         onClick={() => handleDeletePost(post.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors ml-3"
+                        className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors ml-3"
                         title="Delete post"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -666,10 +666,10 @@ export default function ProfilePage() {
           {activeTab === 'listings' && (
             <>
               {listings.length === 0 ? (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                  <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <h3 className="text-lg font-semibold text-gray-600 mb-1">No listings</h3>
-                  <p className="text-gray-400 text-sm">
+                <div className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-12 text-center">
+                  <Package className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-gray-400 mb-1">No listings</h3>
+                  <p className="text-gray-500 text-sm">
                     List equipment for sale in the marketplace.
                   </p>
                 </div>
@@ -677,10 +677,10 @@ export default function ProfilePage() {
                 listings.map((listing) => (
                   <div
                     key={listing.id}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex items-center justify-between"
+                    className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-4 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                      <div className="w-16 h-16 rounded-lg bg-dark-700 overflow-hidden flex-shrink-0">
                         {listing.image_urls && listing.image_urls.length > 0 ? (
                           <img
                             src={listing.image_urls[0]}
@@ -689,13 +689,13 @@ export default function ProfilePage() {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <Package className="w-6 h-6 text-gray-300" />
+                            <Package className="w-6 h-6 text-gray-600" />
                           </div>
                         )}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">{listing.title}</h4>
-                        <div className="flex items-center gap-3 text-sm text-gray-500 mt-0.5">
+                        <h4 className="font-semibold text-white">{listing.title}</h4>
+                        <div className="flex items-center gap-3 text-sm text-gray-400 mt-0.5">
                           <span className="font-medium text-emerald-600">
                             ${listing.price?.toFixed(2)}
                           </span>
@@ -707,10 +707,10 @@ export default function ProfilePage() {
                           <span
                             className={`px-1.5 py-0.5 text-xs rounded-full font-medium ${
                               listing.status === 'active'
-                                ? 'bg-emerald-100 text-emerald-700'
+                                ? 'bg-emerald-900/30 text-emerald-400'
                                 : listing.status === 'sold'
-                                ? 'bg-gray-100 text-gray-600'
-                                : 'bg-amber-100 text-amber-700'
+                                ? 'bg-dark-700 text-gray-400'
+                                : 'bg-amber-900/30 text-amber-400'
                             }`}
                           >
                             {listing.status}
@@ -720,7 +720,7 @@ export default function ProfilePage() {
                     </div>
                     <button
                       onClick={() => handleDeleteListing(listing.id)}
-                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
                       title="Delete listing"
                     >
                       <Trash2 className="w-4 h-4" />

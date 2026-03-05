@@ -165,7 +165,7 @@ export default function NetworkPage() {
     return (
       <div
         key={profile.id}
-        className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow"
+        className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-5 hover:shadow-md transition-shadow"
       >
         <div className="flex items-start gap-4">
           {/* Avatar */}
@@ -185,17 +185,17 @@ export default function NetworkPage() {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-gray-900 truncate">
+              <h3 className="font-semibold text-white truncate">
                 {profile.full_name ?? 'Unknown'}
               </h3>
               {status === 'accepted' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-900/30 text-emerald-400 text-xs font-medium rounded-full">
                   <Check className="w-3 h-3" />
                   Connected
                 </span>
               )}
               {status === 'pending_sent' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-900/30 text-amber-400 text-xs font-medium rounded-full">
                   <Clock className="w-3 h-3" />
                   Pending
                 </span>
@@ -203,8 +203,8 @@ export default function NetworkPage() {
             </div>
 
             {(profile.occupation || profile.company) && (
-              <div className="flex items-center gap-1 text-sm text-gray-600 mt-0.5">
-                <Briefcase className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+              <div className="flex items-center gap-1 text-sm text-gray-400 mt-0.5">
+                <Briefcase className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
                 <span className="truncate">
                   {[profile.occupation, profile.company].filter(Boolean).join(' at ')}
                 </span>
@@ -212,33 +212,33 @@ export default function NetworkPage() {
             )}
 
             {profile.location && (
-              <div className="flex items-center gap-1 text-sm text-gray-500 mt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+              <div className="flex items-center gap-1 text-sm text-gray-400 mt-0.5">
+                <MapPin className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
                 <span className="truncate">{profile.location}</span>
               </div>
             )}
 
             <div className="flex items-center gap-3 mt-1">
               {profile.handicap != null && (
-                <div className="flex items-center gap-1 text-sm text-gray-500">
-                  <Award className="w-3.5 h-3.5 text-gray-400" />
+                <div className="flex items-center gap-1 text-sm text-gray-400">
+                  <Award className="w-3.5 h-3.5 text-gray-500" />
                   <span>Handicap: {profile.handicap}</span>
                 </div>
               )}
               {profile.home_course && (
-                <span className="text-sm text-gray-500 truncate">{profile.home_course}</span>
+                <span className="text-sm text-gray-400 truncate">{profile.home_course}</span>
               )}
             </div>
 
             {profile.bio && (
-              <p className="text-sm text-gray-500 mt-2 line-clamp-2">{profile.bio}</p>
+              <p className="text-sm text-gray-400 mt-2 line-clamp-2">{profile.bio}</p>
             )}
           </div>
         </div>
 
         {/* Action Buttons */}
         {showActions && (
-          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-dark-700">
             {status === 'none' && (
               <button
                 onClick={() => sendConnectionRequest(profile.id)}
@@ -256,7 +256,7 @@ export default function NetworkPage() {
               </button>
             )}
             {status === 'pending_sent' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-500 text-sm rounded-lg font-medium">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-dark-700 text-gray-400 text-sm rounded-lg font-medium">
                 <Clock className="w-4 h-4" />
                 Request Sent
               </span>
@@ -266,9 +266,9 @@ export default function NetworkPage() {
                 href={profile.linkedin_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-dark-600 text-gray-300 text-sm rounded-lg hover:bg-dark-700 transition-colors font-medium"
               >
-                <Linkedin className="w-4 h-4 text-blue-600" />
+                <Linkedin className="w-4 h-4 text-blue-400" />
                 LinkedIn
               </a>
             )}
@@ -288,7 +288,7 @@ export default function NetworkPage() {
     return (
       <div
         key={conn.id}
-        className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow"
+        className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-5 hover:shadow-md transition-shadow"
       >
         <div className="flex items-start gap-4">
           <div className="w-14 h-14 rounded-full bg-emerald-100 flex-shrink-0 overflow-hidden">
@@ -305,27 +305,27 @@ export default function NetworkPage() {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 truncate">
+            <h3 className="font-semibold text-white truncate">
               {profile.full_name ?? 'Unknown'}
             </h3>
             {(profile.occupation || profile.company) && (
-              <div className="flex items-center gap-1 text-sm text-gray-600 mt-0.5">
-                <Briefcase className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+              <div className="flex items-center gap-1 text-sm text-gray-400 mt-0.5">
+                <Briefcase className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
                 <span className="truncate">
                   {[profile.occupation, profile.company].filter(Boolean).join(' at ')}
                 </span>
               </div>
             )}
             {profile.location && (
-              <div className="flex items-center gap-1 text-sm text-gray-500 mt-0.5">
-                <MapPin className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+              <div className="flex items-center gap-1 text-sm text-gray-400 mt-0.5">
+                <MapPin className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
                 <span className="truncate">{profile.location}</span>
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-dark-700">
           {direction === 'incoming' ? (
             <>
               <button
@@ -339,14 +339,14 @@ export default function NetworkPage() {
               <button
                 onClick={() => declineConnection(conn.id)}
                 disabled={actionLoading === conn.id}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-dark-600 text-gray-300 text-sm rounded-lg hover:bg-dark-700 transition-colors font-medium disabled:opacity-50"
               >
                 <X className="w-4 h-4" />
                 Decline
               </button>
             </>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 text-sm rounded-lg font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-900/30 text-amber-400 text-sm rounded-lg font-medium">
               <Clock className="w-4 h-4" />
               Awaiting Response
             </span>
@@ -357,26 +357,26 @@ export default function NetworkPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dark-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Golf Network</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-3xl font-bold text-white">Golf Network</h1>
+          <p className="text-gray-400 mt-1">
             Connect with golfers, build your professional network on the course
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 bg-white rounded-xl shadow-sm border border-gray-200 p-1 mb-6 w-fit">
+        <div className="flex items-center gap-1 bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-1 mb-6 w-fit">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'bg-emerald-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-500'
+                  : 'text-gray-400 hover:text-white border border-transparent'
               }`}
             >
               {tab.key === 'discover' && <Users className="w-4 h-4" />}
@@ -387,8 +387,8 @@ export default function NetworkPage() {
                 <span
                   className={`px-1.5 py-0.5 text-xs rounded-full font-semibold ${
                     activeTab === tab.key
-                      ? 'bg-white/20 text-white'
-                      : 'bg-gray-200 text-gray-600'
+                      ? 'bg-emerald-900/50 text-emerald-400'
+                      : 'bg-dark-700 text-gray-400'
                   }`}
                 >
                   {tab.count}
@@ -401,13 +401,13 @@ export default function NetworkPage() {
         {/* Search Bar */}
         {(activeTab === 'discover' || activeTab === 'network') && (
           <div className="relative mb-6 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
               type="text"
               placeholder="Search by name, company, or occupation..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm shadow-sm"
+              className="w-full pl-10 pr-4 py-2.5 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500 shadow-sm"
             />
           </div>
         )}
@@ -424,11 +424,11 @@ export default function NetworkPage() {
               <>
                 {filteredProfiles.length === 0 ? (
                   <div className="text-center py-20">
-                    <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                    <Users className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-400 mb-2">
                       {searchQuery ? 'No golfers found' : 'No golfers to discover yet'}
                     </h3>
-                    <p className="text-gray-400">
+                    <p className="text-gray-500">
                       {searchQuery
                         ? 'Try a different search term.'
                         : 'Check back soon as more golfers join the network.'}
@@ -447,11 +447,11 @@ export default function NetworkPage() {
               <>
                 {connectedProfiles.length === 0 ? (
                   <div className="text-center py-20">
-                    <UserCheck className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                    <UserCheck className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-400 mb-2">
                       No connections yet
                     </h3>
-                    <p className="text-gray-400 mb-6">
+                    <p className="text-gray-500 mb-6">
                       Start building your golf network by connecting with other golfers.
                     </p>
                     <button
@@ -475,16 +475,16 @@ export default function NetworkPage() {
               <div className="space-y-8">
                 {/* Incoming Requests */}
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h2 className="text-lg font-semibold text-white mb-4">
                     Incoming Requests
                     {pendingIncoming.length > 0 && (
-                      <span className="ml-2 text-sm font-normal text-gray-500">
+                      <span className="ml-2 text-sm font-normal text-gray-400">
                         ({pendingIncoming.length})
                       </span>
                     )}
                   </h2>
                   {pendingIncoming.length === 0 ? (
-                    <p className="text-gray-400 text-sm">No incoming connection requests.</p>
+                    <p className="text-gray-500 text-sm">No incoming connection requests.</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                       {pendingIncoming.map((conn) => renderPendingCard(conn, 'incoming'))}
@@ -494,16 +494,16 @@ export default function NetworkPage() {
 
                 {/* Outgoing Requests */}
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h2 className="text-lg font-semibold text-white mb-4">
                     Sent Requests
                     {pendingOutgoing.length > 0 && (
-                      <span className="ml-2 text-sm font-normal text-gray-500">
+                      <span className="ml-2 text-sm font-normal text-gray-400">
                         ({pendingOutgoing.length})
                       </span>
                     )}
                   </h2>
                   {pendingOutgoing.length === 0 ? (
-                    <p className="text-gray-400 text-sm">No pending outgoing requests.</p>
+                    <p className="text-gray-500 text-sm">No pending outgoing requests.</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                       {pendingOutgoing.map((conn) => renderPendingCard(conn, 'outgoing'))}

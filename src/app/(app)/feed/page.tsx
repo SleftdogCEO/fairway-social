@@ -233,9 +233,9 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dark-950">
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Feed</h1>
+        <h1 className="text-3xl font-bold text-white mb-6">Feed</h1>
 
         {/* Daily Dad Joke */}
         <div className="mb-6">
@@ -246,7 +246,7 @@ export default function FeedPage() {
         {user && (
           <form
             onSubmit={handleSubmitPost}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-8"
+            className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 p-5 mb-8"
           >
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -267,7 +267,7 @@ export default function FeedPage() {
                 onChange={e => setNewPostContent(e.target.value)}
                 placeholder="Share your golf day..."
                 rows={3}
-                className="flex-1 resize-none border-0 bg-gray-50 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-colors"
+                className="flex-1 resize-none border-0 bg-dark-700 rounded-xl px-4 py-3 text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:bg-dark-600 transition-colors"
               />
             </div>
 
@@ -300,7 +300,7 @@ export default function FeedPage() {
                 />
                 <label
                   htmlFor="image-upload"
-                  className="inline-flex items-center gap-2 text-gray-500 hover:text-emerald-600 cursor-pointer transition-colors px-3 py-1.5 rounded-lg hover:bg-emerald-50"
+                  className="inline-flex items-center gap-2 text-gray-400 hover:text-emerald-600 cursor-pointer transition-colors px-3 py-1.5 rounded-lg hover:bg-emerald-900/30"
                 >
                   <ImageIcon className="w-5 h-5" />
                   <span className="text-sm font-medium">Photo</span>
@@ -324,17 +324,17 @@ export default function FeedPage() {
             {[1, 2, 3].map(i => (
               <div
                 key={i}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 animate-pulse"
+                className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 p-5 animate-pulse"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-gray-200" />
+                  <div className="w-10 h-10 rounded-full bg-dark-700" />
                   <div className="space-y-2">
-                    <div className="h-4 w-28 bg-gray-200 rounded" />
-                    <div className="h-3 w-16 bg-gray-200 rounded" />
+                    <div className="h-4 w-28 bg-dark-700 rounded" />
+                    <div className="h-3 w-16 bg-dark-700 rounded" />
                   </div>
                 </div>
-                <div className="h-4 w-full bg-gray-200 rounded mb-2" />
-                <div className="h-4 w-2/3 bg-gray-200 rounded" />
+                <div className="h-4 w-full bg-dark-700 rounded mb-2" />
+                <div className="h-4 w-2/3 bg-dark-700 rounded" />
               </div>
             ))}
           </div>
@@ -343,10 +343,10 @@ export default function FeedPage() {
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageCircle className="w-8 h-8 text-emerald-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+            <h3 className="text-lg font-semibold text-white mb-1">
               No posts yet
             </h3>
-            <p className="text-gray-500">
+            <p className="text-gray-400">
               Share your golf day!
             </p>
           </div>
@@ -355,7 +355,7 @@ export default function FeedPage() {
             {posts.map(post => (
               <div
                 key={post.id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+                className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 overflow-hidden"
               >
                 {/* Post Header */}
                 <div className="p-5 pb-0">
@@ -374,10 +374,10 @@ export default function FeedPage() {
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900 text-sm">
+                      <p className="font-semibold text-white text-sm">
                         {post.profiles?.full_name || 'Unknown'}
                       </p>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-500">
                         {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                       </p>
                     </div>
@@ -385,14 +385,14 @@ export default function FeedPage() {
 
                   {/* Content */}
                   {post.content && (
-                    <p className="text-gray-800 leading-relaxed mb-3 whitespace-pre-wrap">
+                    <p className="text-gray-100 leading-relaxed mb-3 whitespace-pre-wrap">
                       {post.content}
                     </p>
                   )}
 
                   {/* Course tag */}
                   {post.rounds?.courses?.name && (
-                    <div className="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full text-xs font-medium mb-3">
+                    <div className="inline-flex items-center gap-1.5 text-emerald-400 bg-emerald-900/30 px-3 py-1 rounded-full text-xs font-medium mb-3">
                       <MapPin className="w-3.5 h-3.5" />
                       {post.rounds.courses.name}
                     </div>
@@ -411,7 +411,7 @@ export default function FeedPage() {
                 )}
 
                 {/* Actions */}
-                <div className="px-5 py-3 flex items-center gap-6 border-t border-gray-50">
+                <div className="px-5 py-3 flex items-center gap-6 border-t border-dark-700">
                   <button
                     onClick={() => toggleLike(post.id)}
                     className={`inline-flex items-center gap-1.5 text-sm font-medium transition-colors ${
@@ -425,7 +425,7 @@ export default function FeedPage() {
                     />
                     {post.likes_count > 0 && post.likes_count}
                   </button>
-                  <button className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-400 hover:text-emerald-600 transition-colors">
+                  <button className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-emerald-600 transition-colors">
                     <MessageCircle className="w-5 h-5" />
                     {post.comments_count > 0 && post.comments_count}
                   </button>

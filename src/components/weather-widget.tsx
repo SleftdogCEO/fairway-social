@@ -54,7 +54,7 @@ function GolfScoreBadge({ score }: { score: number }) {
       </div>
       <div>
         <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Golf Score</p>
-        <p className="text-sm font-semibold text-gray-800">{label}</p>
+        <p className="text-sm font-semibold text-gray-100">{label}</p>
       </div>
     </div>
   )
@@ -65,11 +65,11 @@ function HourlyRow({ hour }: { hour: HourlyForecast }) {
   const displayTime = time.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })
 
   return (
-    <div className="flex items-center justify-between py-2 px-1 border-b border-gray-50 last:border-0">
+    <div className="flex items-center justify-between py-2 px-1 border-b border-dark-700 last:border-0">
       <span className="text-sm text-gray-500 w-16">{displayTime}</span>
       <div className="flex items-center gap-1.5">
         <WeatherIcon icon={hour.icon} className="w-4 h-4 text-gray-400" />
-        <span className="text-sm font-medium text-gray-800 w-12">{hour.temperature}°F</span>
+        <span className="text-sm font-medium text-gray-100 w-12">{hour.temperature}°F</span>
       </div>
       <div className="flex items-center gap-1">
         <Droplets className="w-3.5 h-3.5 text-blue-400" />
@@ -131,7 +131,7 @@ export function WeatherWidget({ lat, lng, location, courseName, variant = 'full'
 
   if (loading) {
     return (
-      <div className={`${variant === 'inline' ? 'inline-flex items-center gap-2' : 'rounded-xl border border-gray-200 bg-white p-4'}`}>
+      <div className={`${variant === 'inline' ? 'inline-flex items-center gap-2' : 'rounded-xl border border-dark-700 bg-dark-800 p-4'}`}>
         <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
         <span className="text-sm text-gray-400">Loading weather...</span>
       </div>
@@ -148,7 +148,7 @@ export function WeatherWidget({ lat, lng, location, courseName, variant = 'full'
       <div className="inline-flex items-center gap-1.5 text-sm text-gray-500">
         <WeatherIcon icon={weather.current.icon} className="w-4 h-4" />
         <span>{weather.current.temperature}°F</span>
-        <span className="text-gray-300">|</span>
+        <span className="text-gray-600">|</span>
         <Wind className="w-3.5 h-3.5" />
         <span>{weather.current.windSpeed} mph</span>
       </div>
@@ -158,25 +158,25 @@ export function WeatherWidget({ lat, lng, location, courseName, variant = 'full'
   // Compact variant
   if (variant === 'compact') {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-dark-800 rounded-xl border border-dark-700 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <WeatherIcon icon={weather.current.icon} className="w-8 h-8 text-emerald-600" />
             <div>
-              <p className="text-2xl font-bold text-gray-900">{weather.current.temperature}°F</p>
+              <p className="text-2xl font-bold text-white">{weather.current.temperature}°F</p>
               <p className="text-xs text-gray-500">{weather.current.description}</p>
             </div>
           </div>
           <GolfScoreBadge score={weather.golfScore} />
         </div>
-        <p className="text-xs text-gray-500 mt-2 italic">{weather.recommendation}</p>
+        <p className="text-xs text-gray-400 mt-2 italic">{weather.recommendation}</p>
       </div>
     )
   }
 
   // Full variant
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-sky-500 to-blue-500 px-6 py-4 text-white">
         <div className="flex items-center justify-between">
@@ -202,8 +202,8 @@ export function WeatherWidget({ lat, lng, location, courseName, variant = 'full'
           <div className="flex items-center gap-4">
             <WeatherIcon icon={weather.current.icon} className="w-14 h-14 text-sky-500" />
             <div>
-              <p className="text-4xl font-bold text-gray-900">{weather.current.temperature}°F</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-4xl font-bold text-white">{weather.current.temperature}°F</p>
+              <p className="text-sm text-gray-400">
                 Feels like {weather.current.feelsLike}°F &middot; {weather.current.description}
               </p>
             </div>
@@ -212,42 +212,42 @@ export function WeatherWidget({ lat, lng, location, courseName, variant = 'full'
         </div>
 
         {/* Recommendation */}
-        <div className="bg-gray-50 rounded-xl px-4 py-3 mb-4">
-          <p className="text-sm text-gray-700">
+        <div className="bg-dark-700 rounded-xl px-4 py-3 mb-4">
+          <p className="text-sm text-gray-300">
             <span className="font-semibold">&#9971; Golf Forecast:</span> {weather.recommendation}
           </p>
         </div>
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 bg-dark-700 rounded-lg px-3 py-2">
             <Wind className="w-4 h-4 text-gray-400" />
             <div>
               <p className="text-xs text-gray-500">Wind</p>
-              <p className="text-sm font-semibold text-gray-800">
+              <p className="text-sm font-semibold text-gray-100">
                 {weather.current.windSpeed} mph {weather.current.windDirection}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 bg-dark-700 rounded-lg px-3 py-2">
             <Droplets className="w-4 h-4 text-blue-400" />
             <div>
               <p className="text-xs text-gray-500">Humidity</p>
-              <p className="text-sm font-semibold text-gray-800">{weather.current.humidity}%</p>
+              <p className="text-sm font-semibold text-gray-100">{weather.current.humidity}%</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 bg-dark-700 rounded-lg px-3 py-2">
             <Thermometer className="w-4 h-4 text-orange-400" />
             <div>
               <p className="text-xs text-gray-500">UV Index</p>
-              <p className="text-sm font-semibold text-gray-800">{weather.current.uvIndex}</p>
+              <p className="text-sm font-semibold text-gray-100">{weather.current.uvIndex}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2 bg-dark-700 rounded-lg px-3 py-2">
             <Eye className="w-4 h-4 text-gray-400" />
             <div>
               <p className="text-xs text-gray-500">Visibility</p>
-              <p className="text-sm font-semibold text-gray-800">{weather.current.visibility} km</p>
+              <p className="text-sm font-semibold text-gray-100">{weather.current.visibility} km</p>
             </div>
           </div>
         </div>
@@ -255,7 +255,7 @@ export function WeatherWidget({ lat, lng, location, courseName, variant = 'full'
         {/* Hourly forecast toggle */}
         <button
           onClick={() => setShowHourly(!showHourly)}
-          className="flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700 font-medium w-full justify-center py-2 rounded-lg hover:bg-emerald-50 transition-colors"
+          className="flex items-center gap-1 text-sm text-emerald-400 hover:text-emerald-300 font-medium w-full justify-center py-2 rounded-lg hover:bg-emerald-900/30 transition-colors"
         >
           {showHourly ? (
             <>
@@ -269,7 +269,7 @@ export function WeatherWidget({ lat, lng, location, courseName, variant = 'full'
         </button>
 
         {showHourly && (
-          <div className="mt-3 border-t border-gray-100 pt-3">
+          <div className="mt-3 border-t border-dark-700 pt-3">
             {weather.hourly.map((hour, i) => (
               <HourlyRow key={i} hour={hour} />
             ))}

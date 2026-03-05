@@ -3,7 +3,7 @@ import { Activity, ShoppingBag, Users, Camera, Trophy, MapPin } from 'lucide-rea
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-dark-950">
       {/* Hero */}
       <header className="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-950">
         <div className="absolute inset-0 opacity-10">
@@ -50,10 +50,10 @@ export default function HomePage() {
       {/* Features */}
       <section id="features" className="mx-auto max-w-7xl px-6 py-24">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Everything you need on the course and off
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-400">
             Fairway Social brings golfers together with tools designed for how you actually play.
           </p>
         </div>
@@ -108,12 +108,12 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white">
+      <footer className="border-t border-dark-800 bg-dark-950">
         <div className="mx-auto max-w-7xl px-6 py-12">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-xl">&#9971;</span>
-              <span className="font-semibold text-gray-900">Fairway Social</span>
+              <span className="font-semibold text-white">Fairway Social</span>
             </div>
             <p className="text-sm text-gray-500">
               Open source. Built for golfers, by golfers.
@@ -127,12 +127,12 @@ export default function HomePage() {
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-shadow hover:shadow-md">
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50">
+    <div className="rounded-2xl border border-dark-700 bg-dark-800 p-8 shadow-sm transition-all hover:bg-dark-700">
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-950">
         {icon}
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="mt-2 text-gray-600">{description}</p>
+      <h3 className="mt-4 text-lg font-semibold text-white">{title}</h3>
+      <p className="mt-2 text-gray-400">{description}</p>
     </div>
   )
 }

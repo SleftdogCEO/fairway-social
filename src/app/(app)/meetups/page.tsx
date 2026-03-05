@@ -1,0 +1,782 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import {
+  Plus,
+  MapPin,
+  Clock,
+  Users,
+  Calendar,
+  Check,
+  X,
+  MessageCircle,
+  ChevronRight,
+  ChevronDown,
+} from 'lucide-react'
+import { format, formatDistanceToNow, isPast } from 'date-fns'
+import { WeatherWidget } from '@/components/weather-widget'
+
+type MeetupAttendee = {
+  id: string
+  meetup_id: string
+  user_id: string
+  created_at: string
+  profiles?: {
+    id: string
+    full_name: string
+    avatar_url: string | null
+    username: string
+  }
+}
+
+type MeetupCourse = {
+  id: string
+  name: string
+  city: string | null
+  state: string | null
+  lat: number | null
+  lng: number | null
+}
+
+type Meetup = {
+  id: string
+  title: string
+  description: string | null
+  course_id: string | null
+  tee_time: string
+  max_players: number
+  organizer_id: string
+  created_at: string
+  profiles?: {
+    id: string
+    full_name: string
+    avatar_url: string | null
+    username: string
+  }
+  courses?: MeetupCourse
+  meetup_attendees?: MeetupAttendee[]
+}
+
+type CourseOption = {
+  id: string
+  name: string
+  city: string | null
+  state: string | null
+}
+
+type Filter = 'upcoming' | 'my_meetups' | 'past'
+
+export default function MeetupsPage() {
+  const supabase = createClient()
+
+  const [meetups, setMeetups] = useState<Meetup[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showCreate, setShowCreate] = useState(false)
+  const [user, setUser] = useState<{ id: string; full_name: string; avatar_url: string | null } | null>(null)
+  const [filter, setFilter] = useState<Filter>('upcoming')
+  const [expandedMeetup, setExpandedMeetup] = useState<string | null>(null)
+  const [courses, setCourses] = useState<CourseOption[]>([])
+  const [joining, setJoining] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+
+  // Create form state
+  const [formTitle, setFormTitle] = useState('')
+  const [formCourseId, setFormCourseId] = useState('')
+  const [formDateTime, setFormDateTime] = useState('')
+  const [formMaxPlayers, setFormMaxPlayers] = useState(4)
+  const [formDescription, setFormDescription] = useState('')
+
+  useEffect(() => {
+    fetchUser()
+    fetchMeetups()
+    fetchCourses()
+  }, [])
+
+  async function fetchUser() {
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) return
+
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url')
+      .eq('id', authUser.id)
+      .single()
+
+    if (data) setUser(data)
+  }
+
+  async function fetchMeetups() {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('meetups')
+      .select('*, profiles(*), courses(*), meetup_attendees(*, profiles(*))')
+      .order('tee_time', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching meetups:', error)
+    } else {
+      setMeetups(data || [])
+    }
+    setLoading(false)
+  }
+
+  async function fetchCourses() {
+    const { data } = await supabase
+      .from('courses')
+      .select('id, name, city, state')
+      .order('name', { ascending: true })
+
+    if (data) setCourses(data)
+  }
+
+  async function handleJoin(meetupId: string) {
+    if (!user) return
+    setJoining(meetupId)
+
+    const { error } = await supabase
+      .from('meetup_attendees')
+      .insert({ meetup_id: meetupId, user_id: user.id })
+
+    if (!error) {
+      await fetchMeetups()
+    } else {
+      console.error('Error joining meetup:', error)
+    }
+    setJoining(null)
+  }
+
+  async function handleLeave(meetupId: string) {
+    if (!user) return
+    setJoining(meetupId)
+
+    const { error } = await supabase
+      .from('meetup_attendees')
+      .delete()
+      .eq('meetup_id', meetupId)
+      .eq('user_id', user.id)
+
+    if (!error) {
+      await fetchMeetups()
+    } else {
+      console.error('Error leaving meetup:', error)
+    }
+    setJoining(null)
+  }
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault()
+    if (!user || !formTitle.trim() || !formDateTime) return
+
+    setSubmitting(true)
+
+    const { data: newMeetup, error } = await supabase
+      .from('meetups')
+      .insert({
+        title: formTitle.trim(),
+        course_id: formCourseId || null,
+        tee_time: new Date(formDateTime).toISOString(),
+        max_players: formMaxPlayers,
+        description: formDescription.trim() || null,
+        organizer_id: user.id,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Error creating meetup:', error)
+      setSubmitting(false)
+      return
+    }
+
+    if (newMeetup) {
+      await supabase
+        .from('meetup_attendees')
+        .insert({ meetup_id: newMeetup.id, user_id: user.id })
+    }
+
+    // Reset form
+    setFormTitle('')
+    setFormCourseId('')
+    setFormDateTime('')
+    setFormMaxPlayers(4)
+    setFormDescription('')
+    setShowCreate(false)
+    setSubmitting(false)
+    await fetchMeetups()
+  }
+
+  function isUserAttending(meetup: Meetup) {
+    if (!user) return false
+    return meetup.meetup_attendees?.some(a => a.user_id === user.id) ?? false
+  }
+
+  function getMeetupStatus(meetup: Meetup): 'open' | 'full' | 'past' {
+    if (isPast(new Date(meetup.tee_time))) return 'past'
+    const attendeeCount = meetup.meetup_attendees?.length ?? 0
+    if (attendeeCount >= meetup.max_players) return 'full'
+    return 'open'
+  }
+
+  const filteredMeetups = meetups.filter(meetup => {
+    const teeTime = new Date(meetup.tee_time)
+    switch (filter) {
+      case 'upcoming':
+        return !isPast(teeTime)
+      case 'my_meetups':
+        return user && (meetup.organizer_id === user.id || isUserAttending(meetup))
+      case 'past':
+        return isPast(teeTime)
+      default:
+        return true
+    }
+  })
+
+  const statusBadge = (status: 'open' | 'full' | 'past') => {
+    switch (status) {
+      case 'open':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-900/40 text-emerald-400 border border-emerald-800/50">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Open
+          </span>
+        )
+      case 'full':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-900/40 text-amber-400 border border-amber-800/50">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            Full
+          </span>
+        )
+      case 'past':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-dark-700 text-gray-400 border border-dark-600">
+            <span className="w-1.5 h-1.5 rounded-full bg-gray-500" />
+            Past
+          </span>
+        )
+    }
+  }
+
+  const filterTabs: { key: Filter; label: string }[] = [
+    { key: 'upcoming', label: 'Upcoming' },
+    { key: 'my_meetups', label: 'My Meetups' },
+    { key: 'past', label: 'Past' },
+  ]
+
+  return (
+    <div className="min-h-screen bg-dark-950">
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Meetups</h1>
+            <p className="text-gray-400 mt-1">
+              Find playing partners and organize group rounds.
+            </p>
+          </div>
+          {user && (
+            <button
+              onClick={() => setShowCreate(true)}
+              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-900/30"
+            >
+              <Plus className="w-4 h-4" />
+              New Meetup
+            </button>
+          )}
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="flex gap-1 bg-dark-800 rounded-xl p-1 mb-6 border border-dark-700">
+          {filterTabs.map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setFilter(tab.key)}
+              className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                filter === tab.key
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white hover:bg-dark-700'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Create Meetup Modal */}
+        {showCreate && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowCreate(false)}
+            />
+            <div className="relative bg-dark-800 rounded-2xl border border-dark-700 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-5 border-b border-dark-700">
+                <h2 className="text-lg font-bold text-white">Organize a Meetup</h2>
+                <button
+                  onClick={() => setShowCreate(false)}
+                  className="p-1.5 rounded-lg hover:bg-dark-700 text-gray-400 hover:text-white transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreate} className="p-5 space-y-4">
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    value={formTitle}
+                    onChange={e => setFormTitle(e.target.value)}
+                    placeholder='e.g., "Saturday Morning 18 at Pebble Beach"'
+                    required
+                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Course */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                    Course
+                  </label>
+                  <select
+                    value={formCourseId}
+                    onChange={e => setFormCourseId(e.target.value)}
+                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors appearance-none"
+                  >
+                    <option value="">Select a course...</option>
+                    {courses.map(course => (
+                      <option key={course.id} value={course.id}>
+                        {course.name}{course.city ? ` - ${course.city}` : ''}{course.state ? `, ${course.state}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Date & Time */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                    Date & Time
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={formDateTime}
+                    onChange={e => setFormDateTime(e.target.value)}
+                    required
+                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
+                  />
+                </div>
+
+                {/* Max Players */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                    Max Players
+                  </label>
+                  <input
+                    type="number"
+                    min={2}
+                    max={8}
+                    value={formMaxPlayers}
+                    onChange={e => setFormMaxPlayers(Number(e.target.value))}
+                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Between 2 and 8 players</p>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                    Description / Notes
+                    <span className="text-gray-500 font-normal ml-1">(optional)</span>
+                  </label>
+                  <textarea
+                    value={formDescription}
+                    onChange={e => setFormDescription(e.target.value)}
+                    placeholder="Casual round, all skill levels welcome..."
+                    rows={3}
+                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors resize-none"
+                  />
+                </div>
+
+                {/* Submit */}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreate(false)}
+                    className="flex-1 px-4 py-3 rounded-xl text-sm font-medium text-gray-400 bg-dark-700 hover:bg-dark-600 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting || !formTitle.trim() || !formDateTime}
+                    className="flex-1 px-4 py-3 rounded-xl text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {submitting ? 'Creating...' : 'Create Meetup'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Meetup Cards */}
+        {loading ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map(i => (
+              <div
+                key={i}
+                className="bg-dark-800 rounded-2xl border border-dark-700 p-5 animate-pulse"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-dark-700" />
+                  <div className="space-y-2 flex-1">
+                    <div className="h-5 w-48 bg-dark-700 rounded" />
+                    <div className="h-3 w-24 bg-dark-700 rounded" />
+                  </div>
+                  <div className="h-6 w-16 bg-dark-700 rounded-full" />
+                </div>
+                <div className="h-4 w-full bg-dark-700 rounded mb-2" />
+                <div className="h-4 w-2/3 bg-dark-700 rounded mb-4" />
+                <div className="h-2 w-full bg-dark-700 rounded-full" />
+              </div>
+            ))}
+          </div>
+        ) : filteredMeetups.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {filter === 'upcoming' && 'No meetups planned yet'}
+              {filter === 'my_meetups' && "You haven't joined any meetups yet"}
+              {filter === 'past' && 'No past meetups'}
+            </h3>
+            <p className="text-gray-400 text-sm max-w-sm mx-auto">
+              {filter === 'upcoming' && 'Be the first to organize one! Tap the button above to get a group together.'}
+              {filter === 'my_meetups' && 'Browse upcoming meetups and tap "I\'m In" to join one.'}
+              {filter === 'past' && 'Past meetups will appear here after their tee time.'}
+            </p>
+            {filter === 'upcoming' && user && (
+              <button
+                onClick={() => setShowCreate(true)}
+                className="mt-6 inline-flex items-center gap-2 bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-emerald-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Organize a Meetup
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredMeetups.map(meetup => {
+              const status = getMeetupStatus(meetup)
+              const attendeeCount = meetup.meetup_attendees?.length ?? 0
+              const spotsProgress = (attendeeCount / meetup.max_players) * 100
+              const attending = isUserAttending(meetup)
+              const isExpanded = expandedMeetup === meetup.id
+              const isOrganizer = user?.id === meetup.organizer_id
+
+              return (
+                <div
+                  key={meetup.id}
+                  className="bg-dark-800 rounded-2xl border border-dark-700 overflow-hidden hover:border-dark-600 transition-colors"
+                >
+                  {/* Card Header */}
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        {/* Organizer Avatar */}
+                        <div className="w-10 h-10 rounded-full bg-emerald-900/50 flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-emerald-800/50">
+                          {meetup.profiles?.avatar_url ? (
+                            <img
+                              src={meetup.profiles.avatar_url}
+                              alt={meetup.profiles.full_name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-emerald-400 font-semibold text-sm">
+                              {meetup.profiles?.full_name?.charAt(0)?.toUpperCase() || '?'}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <h3 className="text-white font-semibold text-base leading-tight truncate">
+                            {meetup.title}
+                          </h3>
+                          <p className="text-gray-500 text-xs mt-0.5">
+                            by {meetup.profiles?.full_name || 'Unknown'}
+                            {isOrganizer && (
+                              <span className="ml-1.5 text-emerald-400">(you)</span>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+
+                      {statusBadge(status)}
+                    </div>
+
+                    {/* Details row */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm">
+                      {meetup.courses && (
+                        <div className="flex items-center gap-1.5 text-gray-300">
+                          <MapPin className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                          <span className="truncate">{meetup.courses.name}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1.5 text-gray-300">
+                        <Calendar className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span>{format(new Date(meetup.tee_time), 'EEE, MMM d')}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-gray-300">
+                        <Clock className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span>{format(new Date(meetup.tee_time), 'h:mm a')}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-gray-300">
+                        <Users className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span>
+                          {attendeeCount}/{meetup.max_players} spots
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Spots progress bar */}
+                    <div className="mb-4">
+                      <div className="w-full h-2 bg-dark-700 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            status === 'full'
+                              ? 'bg-amber-500'
+                              : status === 'past'
+                              ? 'bg-gray-500'
+                              : 'bg-emerald-500'
+                          }`}
+                          style={{ width: `${Math.min(spotsProgress, 100)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Attendees row */}
+                    {attendeeCount > 0 && (
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="flex -space-x-2">
+                            {meetup.meetup_attendees?.slice(0, 6).map(attendee => (
+                              <div
+                                key={attendee.id}
+                                className="w-8 h-8 rounded-full border-2 border-dark-800 bg-dark-600 flex items-center justify-center overflow-hidden"
+                                title={attendee.profiles?.full_name || 'Player'}
+                              >
+                                {attendee.profiles?.avatar_url ? (
+                                  <img
+                                    src={attendee.profiles.avatar_url}
+                                    alt={attendee.profiles.full_name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <span className="text-gray-300 text-xs font-medium">
+                                    {attendee.profiles?.full_name?.charAt(0)?.toUpperCase() || '?'}
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                            {attendeeCount > 6 && (
+                              <div className="w-8 h-8 rounded-full border-2 border-dark-800 bg-dark-600 flex items-center justify-center">
+                                <span className="text-gray-400 text-xs font-medium">
+                                  +{attendeeCount - 6}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <span className="text-xs text-gray-500">
+                            {meetup.meetup_attendees
+                              ?.slice(0, 2)
+                              .map(a => a.profiles?.full_name?.split(' ')[0])
+                              .join(', ')}
+                            {attendeeCount > 2 && ` +${attendeeCount - 2} more`}
+                          </span>
+                        </div>
+
+                        {/* Time until tee time */}
+                        {!isPast(new Date(meetup.tee_time)) && (
+                          <span className="text-xs text-gray-500">
+                            {formatDistanceToNow(new Date(meetup.tee_time), { addSuffix: true })}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Weather widget (inline for the course) */}
+                    {meetup.courses?.lat && meetup.courses?.lng && !isPast(new Date(meetup.tee_time)) && (
+                      <div className="mb-4">
+                        <WeatherWidget
+                          lat={meetup.courses.lat}
+                          lng={meetup.courses.lng}
+                          courseName={meetup.courses.name}
+                          variant="inline"
+                        />
+                      </div>
+                    )}
+
+                    {/* Action buttons */}
+                    <div className="flex items-center gap-2">
+                      {status !== 'past' && user && (
+                        <>
+                          {attending ? (
+                            <button
+                              onClick={() => handleLeave(meetup.id)}
+                              disabled={joining === meetup.id}
+                              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-dark-700 text-gray-300 hover:bg-red-900/30 hover:text-red-400 border border-dark-600 hover:border-red-800/50 transition-colors disabled:opacity-50"
+                            >
+                              {joining === meetup.id ? (
+                                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <X className="w-4 h-4" />
+                              )}
+                              Leave
+                            </button>
+                          ) : status === 'open' ? (
+                            <button
+                              onClick={() => handleJoin(meetup.id)}
+                              disabled={joining === meetup.id}
+                              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-900/30 disabled:opacity-50"
+                            >
+                              {joining === meetup.id ? (
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <Check className="w-4 h-4" />
+                              )}
+                              I&apos;m In
+                            </button>
+                          ) : null}
+                        </>
+                      )}
+
+                      {attending && (
+                        <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-medium">
+                          <Check className="w-3.5 h-3.5" />
+                          You&apos;re going
+                        </span>
+                      )}
+
+                      <button
+                        onClick={() => setExpandedMeetup(isExpanded ? null : meetup.id)}
+                        className="ml-auto inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-dark-700 transition-colors"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        Details
+                        {isExpanded ? (
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        ) : (
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Expanded details */}
+                  {isExpanded && (
+                    <div className="border-t border-dark-700 bg-dark-900/50 px-5 py-4 space-y-4">
+                      {meetup.description && (
+                        <div>
+                          <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                            Notes
+                          </h4>
+                          <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+                            {meetup.description}
+                          </p>
+                        </div>
+                      )}
+
+                      {meetup.courses && (
+                        <div>
+                          <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                            Course
+                          </h4>
+                          <p className="text-gray-300 text-sm">
+                            {meetup.courses.name}
+                            {meetup.courses.city && `, ${meetup.courses.city}`}
+                            {meetup.courses.state && `, ${meetup.courses.state}`}
+                          </p>
+                        </div>
+                      )}
+
+                      <div>
+                        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                          Confirmed Players ({attendeeCount}/{meetup.max_players})
+                        </h4>
+                        <div className="space-y-2">
+                          {meetup.meetup_attendees?.map(attendee => (
+                            <div
+                              key={attendee.id}
+                              className="flex items-center gap-3 py-1.5"
+                            >
+                              <div className="w-7 h-7 rounded-full bg-dark-600 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                {attendee.profiles?.avatar_url ? (
+                                  <img
+                                    src={attendee.profiles.avatar_url}
+                                    alt={attendee.profiles.full_name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <span className="text-gray-300 text-xs font-medium">
+                                    {attendee.profiles?.full_name?.charAt(0)?.toUpperCase() || '?'}
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-sm text-gray-200">
+                                {attendee.profiles?.full_name || 'Unknown'}
+                              </span>
+                              {attendee.user_id === meetup.organizer_id && (
+                                <span className="text-xs text-emerald-400 bg-emerald-900/30 px-2 py-0.5 rounded-full">
+                                  Organizer
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                          {attendeeCount < meetup.max_players && (
+                            <div className="flex items-center gap-3 py-1.5 opacity-40">
+                              <div className="w-7 h-7 rounded-full border-2 border-dashed border-dark-600 flex items-center justify-center">
+                                <Plus className="w-3.5 h-3.5 text-gray-500" />
+                              </div>
+                              <span className="text-sm text-gray-500 italic">
+                                {meetup.max_players - attendeeCount} spot{meetup.max_players - attendeeCount !== 1 ? 's' : ''} open
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Full weather widget in expanded view */}
+                      {meetup.courses?.lat && meetup.courses?.lng && !isPast(new Date(meetup.tee_time)) && (
+                        <div>
+                          <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                            Weather
+                          </h4>
+                          <WeatherWidget
+                            lat={meetup.courses.lat}
+                            lng={meetup.courses.lng}
+                            courseName={meetup.courses.name}
+                            variant="compact"
+                          />
+                        </div>
+                      )}
+
+                      <p className="text-xs text-gray-600">
+                        Created {formatDistanceToNow(new Date(meetup.created_at), { addSuffix: true })}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

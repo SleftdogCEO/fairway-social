@@ -208,12 +208,12 @@ export function GolfCalendar() {
       {/* Calendar Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold text-gray-900">
+          <h2 className="text-2xl font-bold text-white">
             {MONTH_NAMES[currentMonth]} {currentYear}
           </h2>
           <button
             onClick={goToToday}
-            className="text-xs font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-full transition-colors"
+            className="text-xs font-medium text-emerald-400 bg-emerald-900/30 hover:bg-emerald-900/50 px-3 py-1 rounded-full transition-colors"
           >
             Today
           </button>
@@ -221,23 +221,23 @@ export function GolfCalendar() {
         <div className="flex items-center gap-1">
           <button
             onClick={prevMonth}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-dark-700 rounded-lg transition-colors"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-600" />
+            <ChevronLeft className="w-5 h-5 text-gray-400" />
           </button>
           <button
             onClick={nextMonth}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-dark-700 rounded-lg transition-colors"
           >
-            <ChevronRight className="w-5 h-5 text-gray-600" />
+            <ChevronRight className="w-5 h-5 text-gray-400" />
           </button>
         </div>
       </div>
 
       {/* Calendar Grid */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 overflow-hidden">
         {/* Day headers */}
-        <div className="grid grid-cols-7 border-b border-gray-200">
+        <div className="grid grid-cols-7 border-b border-dark-700">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
             <div key={day} className="py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
               {day}
@@ -260,9 +260,9 @@ export function GolfCalendar() {
                 <button
                   key={idx}
                   onClick={() => setSelectedDay(isSelected ? null : day)}
-                  className={`min-h-[90px] p-2 border-b border-r border-gray-100 text-left transition-colors relative group ${
-                    !day.isCurrentMonth ? 'bg-gray-50' : 'bg-white hover:bg-emerald-50/30'
-                  } ${isSelected ? 'bg-emerald-50 ring-2 ring-inset ring-emerald-400' : ''}`}
+                  className={`min-h-[90px] p-2 border-b border-r border-dark-700 text-left transition-colors relative group ${
+                    !day.isCurrentMonth ? 'bg-dark-900' : 'bg-dark-800 hover:bg-dark-700/50'
+                  } ${isSelected ? 'bg-emerald-900/20 ring-2 ring-inset ring-emerald-400' : ''}`}
                 >
                   <div className="flex items-center justify-between">
                     <span
@@ -270,8 +270,8 @@ export function GolfCalendar() {
                         day.isToday
                           ? 'bg-emerald-600 text-white w-7 h-7 rounded-full flex items-center justify-center'
                           : day.isCurrentMonth
-                          ? 'text-gray-900'
-                          : 'text-gray-300'
+                          ? 'text-white'
+                          : 'text-gray-600'
                       }`}
                     >
                       {day.date.getDate()}
@@ -282,7 +282,7 @@ export function GolfCalendar() {
                           e.stopPropagation()
                           openCreateForDate(day.date)
                         }}
-                        className="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-full bg-emerald-100 text-emerald-600 hover:bg-emerald-200 transition-all cursor-pointer"
+                        className="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-full bg-emerald-900/30 text-emerald-400 hover:bg-emerald-900/50 transition-all cursor-pointer"
                       >
                         <Plus className="w-3 h-3" />
                       </span>
@@ -297,10 +297,10 @@ export function GolfCalendar() {
                           key={round.id}
                           className={`text-[10px] leading-tight px-1.5 py-0.5 rounded truncate font-medium ${
                             round.status === 'active'
-                              ? 'bg-emerald-100 text-emerald-700'
+                              ? 'bg-emerald-900/30 text-emerald-400'
                               : round.status === 'completed'
-                              ? 'bg-gray-100 text-gray-600'
-                              : 'bg-blue-100 text-blue-700'
+                              ? 'bg-dark-700 text-gray-400'
+                              : 'bg-blue-900/30 text-blue-400'
                           }`}
                         >
                           {round.tee_time
@@ -310,7 +310,7 @@ export function GolfCalendar() {
                         </div>
                       ))}
                       {day.rounds.length > 3 && (
-                        <p className="text-[10px] text-gray-400 px-1">
+                        <p className="text-[10px] text-gray-500 px-1">
                           +{day.rounds.length - 3} more
                         </p>
                       )}
@@ -325,17 +325,17 @@ export function GolfCalendar() {
 
       {/* Selected Day Detail Panel */}
       {selectedDay && selectedDay.rounds.length > 0 && (
-        <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="mt-4 bg-dark-800 rounded-2xl shadow-sm border border-dark-700 overflow-hidden">
+          <div className="px-5 py-4 border-b border-dark-700 flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-gray-900">
+              <h3 className="font-semibold text-white">
                 {selectedDay.date.toLocaleDateString('en-US', {
                   weekday: 'long',
                   month: 'long',
                   day: 'numeric',
                 })}
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-400">
                 {selectedDay.rounds.length} {selectedDay.rounds.length === 1 ? 'round' : 'rounds'} scheduled
               </p>
             </div>
@@ -348,7 +348,7 @@ export function GolfCalendar() {
             </button>
           </div>
 
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-dark-700">
             {selectedDay.rounds.map(round => (
               <div key={round.id} className="px-5 py-4">
                 <div className="flex items-center gap-4">
@@ -366,10 +366,10 @@ export function GolfCalendar() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm">
+                    <p className="font-semibold text-white text-sm">
                       {round.profiles?.full_name || 'Unknown'}
                     </p>
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                    <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5">
                       <span className="flex items-center gap-1">
                         <MapPin className="w-3 h-3" />
                         {round.courses?.name || 'TBD'}
@@ -385,15 +385,15 @@ export function GolfCalendar() {
                           : 'Time TBD'}
                       </span>
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                        round.status === 'active' ? 'bg-emerald-100 text-emerald-700' :
-                        round.status === 'completed' ? 'bg-gray-100 text-gray-600' :
-                        'bg-blue-100 text-blue-700'
+                        round.status === 'active' ? 'bg-emerald-900/30 text-emerald-400' :
+                        round.status === 'completed' ? 'bg-dark-700 text-gray-400' :
+                        'bg-blue-900/30 text-blue-400'
                       }`}>
                         {round.status}
                       </span>
                     </div>
                     {round.notes && (
-                      <p className="text-xs text-gray-400 mt-1 italic">{round.notes}</p>
+                      <p className="text-xs text-gray-500 mt-1 italic">{round.notes}</p>
                     )}
                   </div>
                   {/* Weather for this round's course */}
@@ -414,9 +414,9 @@ export function GolfCalendar() {
 
       {/* Selected Day - No Rounds */}
       {selectedDay && selectedDay.rounds.length === 0 && selectedDay.isCurrentMonth && (
-        <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-200 p-6 text-center">
-          <CalendarIcon className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-          <p className="text-gray-500 text-sm mb-3">
+        <div className="mt-4 bg-dark-800 rounded-2xl shadow-sm border border-dark-700 p-6 text-center">
+          <CalendarIcon className="w-10 h-10 text-gray-600 mx-auto mb-2" />
+          <p className="text-gray-400 text-sm mb-3">
             No rounds on {selectedDay.date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </p>
           <button
@@ -432,24 +432,24 @@ export function GolfCalendar() {
       {/* Create Round Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-bold text-gray-900">Schedule a Round</h3>
+          <div className="bg-dark-800 rounded-2xl shadow-xl max-w-md w-full">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-dark-700">
+              <h3 className="text-lg font-bold text-white">Schedule a Round</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1 hover:bg-dark-700 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-gray-400" />
               </button>
             </div>
             <form onSubmit={handleCreateRound} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Course</label>
                 <select
                   value={newCourseId}
                   onChange={e => setNewCourseId(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
+                  className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-dark-700 text-gray-100"
                 >
                   <option value="">Select a course...</option>
                   {courses.map(c => (
@@ -460,23 +460,23 @@ export function GolfCalendar() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tee Time</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Tee Time</label>
                 <input
                   type="datetime-local"
                   value={newTeeTime}
                   onChange={e => setNewTeeTime(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                  className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-dark-700 text-gray-100"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Notes (optional)</label>
                 <input
                   type="text"
                   value={newNotes}
                   onChange={e => setNewNotes(e.target.value)}
                   placeholder="Looking for a foursome, handicap 15..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                  className="w-full px-3 py-2 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-dark-700 text-gray-100 placeholder-gray-500"
                 />
               </div>
 
@@ -503,7 +503,7 @@ export function GolfCalendar() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+                  className="flex-1 px-4 py-2.5 border border-dark-600 text-gray-300 rounded-lg hover:bg-dark-700 transition-colors font-medium text-sm"
                 >
                   Cancel
                 </button>

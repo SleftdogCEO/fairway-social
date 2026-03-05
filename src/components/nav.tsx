@@ -23,6 +23,7 @@ const navLinks = [
   { href: "/marketplace", label: "Marketplace", icon: ShoppingBag },
   { href: "/network", label: "Network", icon: Users },
   { href: "/calendar", label: "Calendar", icon: Calendar },
+  { href: "/meetups", label: "Meetups", icon: Users },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { href: "/profile", label: "Profile", icon: User },
 ];
@@ -73,7 +74,7 @@ export default function Nav() {
   return (
     <>
       {/* Desktop nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-emerald-700 text-white shadow-lg">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-dark-900 border-b border-dark-700 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -93,8 +94,8 @@ export default function Nav() {
                     href={link.href}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? "bg-emerald-800 text-white"
-                        : "text-emerald-100 hover:bg-emerald-600 hover:text-white"
+                        ? "bg-emerald-900/50 text-emerald-400"
+                        : "text-gray-400 hover:bg-dark-800 hover:text-white"
                     }`}
                   >
                     <Icon size={18} />
@@ -110,16 +111,16 @@ export default function Nav() {
                 <img
                   src={user.avatar_url}
                   alt="Avatar"
-                  className="w-8 h-8 rounded-full border-2 border-emerald-300"
+                  className="w-8 h-8 rounded-full border-2 border-dark-600"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-emerald-500 border-2 border-emerald-300 flex items-center justify-center text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-emerald-500 border-2 border-dark-600 flex items-center justify-center text-xs font-bold">
                   {getInitials()}
                 </div>
               )}
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1 text-emerald-200 hover:text-white transition-colors text-sm"
+                className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors text-sm"
               >
                 <LogOut size={16} />
                 <span>Logout</span>
@@ -129,7 +130,7 @@ export default function Nav() {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-emerald-600 transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-dark-800 transition-colors"
             >
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -147,9 +148,9 @@ export default function Nav() {
           />
 
           {/* Slide-out panel */}
-          <div className="fixed top-0 right-0 bottom-0 w-72 bg-emerald-800 text-white shadow-2xl pt-20 px-4">
+          <div className="fixed top-0 right-0 bottom-0 w-72 bg-dark-900 text-white shadow-2xl pt-20 px-4">
             {/* User info */}
-            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-emerald-600">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-dark-700">
               {user?.avatar_url ? (
                 <img
                   src={user.avatar_url}
@@ -165,7 +166,7 @@ export default function Nav() {
                 <p className="text-sm font-semibold truncate">
                   {user?.full_name || "Golfer"}
                 </p>
-                <p className="text-xs text-emerald-300 truncate">
+                <p className="text-xs text-gray-500 truncate">
                   {user?.email}
                 </p>
               </div>
@@ -183,8 +184,8 @@ export default function Nav() {
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? "bg-emerald-900 text-white"
-                        : "text-emerald-100 hover:bg-emerald-700"
+                        ? "bg-dark-800 text-emerald-400"
+                        : "text-gray-400 hover:bg-dark-800 hover:text-white"
                     }`}
                   >
                     <Icon size={20} />
@@ -197,7 +198,7 @@ export default function Nav() {
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-3 mt-4 w-full rounded-lg text-sm font-medium text-emerald-200 hover:bg-emerald-700 hover:text-white transition-colors border-t border-emerald-600 pt-4"
+              className="flex items-center gap-3 px-3 py-3 mt-4 w-full rounded-lg text-sm font-medium text-gray-500 hover:bg-dark-800 hover:text-white transition-colors border-t border-dark-700 pt-4"
             >
               <LogOut size={20} />
               <span>Logout</span>

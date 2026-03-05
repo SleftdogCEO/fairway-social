@@ -43,8 +43,8 @@ export function GolfReactionPicker({ reactions, onReact, onRemoveReaction }: Pro
           onClick={() => (r.reacted ? onRemoveReaction(r.emoji) : onReact({ emoji: r.emoji, label: r.label }))}
           className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm border transition-all hover:scale-105 ${
             r.reacted
-              ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
-              : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300'
+              ? 'bg-emerald-900/30 border-emerald-700 text-emerald-400'
+              : 'bg-dark-700 border-dark-600 text-gray-400 hover:border-dark-500'
           }`}
           title={r.label}
         >
@@ -57,7 +57,7 @@ export function GolfReactionPicker({ reactions, onReact, onRemoveReaction }: Pro
       <div className="relative" ref={pickerRef}>
         <button
           onClick={() => setShowPicker(!showPicker)}
-          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm border border-dashed border-gray-300 text-gray-400 hover:border-emerald-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm border border-dashed border-dark-600 text-gray-500 hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-900/30 transition-all"
           title="Add reaction"
         >
           <span className="text-base">+</span>
@@ -66,7 +66,7 @@ export function GolfReactionPicker({ reactions, onReact, onRemoveReaction }: Pro
 
         {/* Picker popup */}
         {showPicker && (
-          <div className="absolute bottom-full left-0 mb-2 z-50 bg-white rounded-2xl shadow-xl border border-gray-200 p-3 w-72 animate-in fade-in">
+          <div className="absolute bottom-full left-0 mb-2 z-50 bg-dark-800 rounded-2xl shadow-xl border border-dark-700 p-3 w-72 animate-in fade-in">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
               Golf Reactions
             </p>
@@ -78,13 +78,13 @@ export function GolfReactionPicker({ reactions, onReact, onRemoveReaction }: Pro
                     onReact(reaction)
                     setShowPicker(false)
                   }}
-                  className="flex flex-col items-center gap-0.5 p-2 rounded-xl hover:bg-emerald-50 transition-colors group"
+                  className="flex flex-col items-center gap-0.5 p-2 rounded-xl hover:bg-emerald-900/30 transition-colors group"
                   title={reaction.label}
                 >
                   <span className="text-2xl group-hover:scale-125 transition-transform">
                     {reaction.emoji}
                   </span>
-                  <span className="text-[10px] text-gray-500 group-hover:text-emerald-700 leading-tight text-center">
+                  <span className="text-[10px] text-gray-500 group-hover:text-emerald-400 leading-tight text-center">
                     {reaction.label}
                   </span>
                 </button>
@@ -118,7 +118,7 @@ export function QuickReactionBar({ recipientName, onSend }: { recipientName: str
           className={`p-1.5 rounded-lg transition-all hover:scale-110 ${
             sent === r.emoji
               ? 'bg-emerald-100 ring-2 ring-emerald-400 scale-125'
-              : 'hover:bg-gray-100'
+              : 'hover:bg-dark-700'
           }`}
           title={`Send "${r.label}" to ${recipientName}`}
         >

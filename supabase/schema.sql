@@ -229,6 +229,53 @@ create policy "Users can delete their own comments"
   on public.comments for delete using (auth.uid() = user_id);
 
 -- ============================================
+-- MEETUPS (Group coordination)
+-- ============================================
+create table public.meetups (
+  id uuid default uuid_generate_v4() primary key,
+  organizer_id uuid references public.profiles(id) on delete cascade not null,
+  course_id uuid references public.courses(id) on delete set null,
+  title text not null,
+  description text,
+  tee_time timestamptz not null,
+  max_players integer default 4 check (max_players >= 2 and max_players <= 8),
+  created_at timestamptz default now()
+);
+
+alter table public.meetups enable row level security;
+
+create policy "Meetups are viewable by everyone"
+  on public.meetups for select using (true);
+
+create policy "Users can create meetups"
+  on public.meetups for insert with check (auth.uid() = organizer_id);
+
+create policy "Organizers can update their meetups"
+  on public.meetups for update using (auth.uid() = organizer_id);
+
+create policy "Organizers can delete their meetups"
+  on public.meetups for delete using (auth.uid() = organizer_id);
+
+create table public.meetup_attendees (
+  id uuid default uuid_generate_v4() primary key,
+  meetup_id uuid references public.meetups(id) on delete cascade not null,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  created_at timestamptz default now(),
+  unique(meetup_id, user_id)
+);
+
+alter table public.meetup_attendees enable row level security;
+
+create policy "Meetup attendees are viewable by everyone"
+  on public.meetup_attendees for select using (true);
+
+create policy "Users can join meetups"
+  on public.meetup_attendees for insert with check (auth.uid() = user_id);
+
+create policy "Users can leave meetups"
+  on public.meetup_attendees for delete using (auth.uid() = user_id);
+
+-- ============================================
 -- MARKETPLACE (Buy/Sell Equipment)
 -- ============================================
 create type listing_condition as enum ('new', 'like_new', 'good', 'fair', 'poor');

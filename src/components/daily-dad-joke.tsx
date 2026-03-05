@@ -71,14 +71,14 @@ export function DailyDadJoke({ variant = 'card' }: { variant?: 'card' | 'banner'
 
   if (variant === 'compact') {
     return (
-      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+      <div className="bg-emerald-900/20 border border-emerald-800 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-2">
           <span>&#9971;</span>
           <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Dad Joke of the Day</span>
         </div>
-        <p className="text-sm font-medium text-gray-800">{joke.setup}</p>
+        <p className="text-sm font-medium text-gray-100">{joke.setup}</p>
         {revealed ? (
-          <p className="text-sm font-bold text-emerald-700 mt-1">{joke.punchline}</p>
+          <p className="text-sm font-bold text-emerald-400 mt-1">{joke.punchline}</p>
         ) : (
           <button
             onClick={() => setRevealed(true)}
@@ -93,7 +93,7 @@ export function DailyDadJoke({ variant = 'card' }: { variant?: 'card' | 'banner'
 
   // Default card variant
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 overflow-hidden">
       <div className="bg-gradient-to-r from-emerald-600 to-teal-500 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -115,13 +115,13 @@ export function DailyDadJoke({ variant = 'card' }: { variant?: 'card' | 'banner'
         </div>
       </div>
       <div className="px-6 py-5">
-        <p className="text-gray-800 text-lg font-medium mb-3">{joke.setup}</p>
+        <p className="text-gray-100 text-lg font-medium mb-3">{joke.setup}</p>
         {revealed ? (
           <div>
-            <p className="text-emerald-700 text-xl font-bold mb-4">
+            <p className="text-emerald-400 text-xl font-bold mb-4">
               {joke.punchline}
             </p>
-            <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+            <div className="flex items-center gap-2 pt-2 border-t border-dark-700">
               <button
                 onClick={getRandomJoke}
                 className="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
@@ -129,8 +129,8 @@ export function DailyDadJoke({ variant = 'card' }: { variant?: 'card' | 'banner'
                 <RefreshCw className="w-3.5 h-3.5" />
                 Another one
               </button>
-              <span className="text-gray-300">|</span>
-              <span className="text-xs text-gray-400">
+              <span className="text-dark-600">|</span>
+              <span className="text-xs text-gray-500">
                 Share this groaner with your foursome
               </span>
             </div>
@@ -138,7 +138,7 @@ export function DailyDadJoke({ variant = 'card' }: { variant?: 'card' | 'banner'
         ) : (
           <button
             onClick={() => setRevealed(true)}
-            className="w-full py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold rounded-xl transition-colors text-sm"
+            className="w-full py-3 bg-emerald-900/30 hover:bg-emerald-900/50 text-emerald-400 font-semibold rounded-xl transition-colors text-sm"
           >
             Tap to reveal the punchline...
           </button>

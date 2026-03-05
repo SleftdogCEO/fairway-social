@@ -103,10 +103,10 @@ export default function LeaderboardPage() {
   const periodLabel = period === 'today' ? 'Today' : period === 'week' ? 'This Week' : 'This Month'
 
   function getRankStyle(rank: number) {
-    if (rank === 0) return { bg: 'bg-amber-50', border: 'border-amber-200', badge: 'bg-amber-400', text: 'text-amber-800' }
-    if (rank === 1) return { bg: 'bg-gray-50', border: 'border-gray-200', badge: 'bg-gray-400', text: 'text-gray-700' }
-    if (rank === 2) return { bg: 'bg-orange-50', border: 'border-orange-200', badge: 'bg-orange-400', text: 'text-orange-800' }
-    return { bg: 'bg-white', border: 'border-gray-100', badge: 'bg-gray-200', text: 'text-gray-500' }
+    if (rank === 0) return { bg: 'bg-amber-900/20', border: 'border-amber-800', badge: 'bg-amber-400', text: 'text-amber-400' }
+    if (rank === 1) return { bg: 'bg-dark-800/80', border: 'border-dark-700', badge: 'bg-gray-400', text: 'text-gray-300' }
+    if (rank === 2) return { bg: 'bg-orange-900/20', border: 'border-orange-800', badge: 'bg-orange-400', text: 'text-orange-400' }
+    return { bg: 'bg-dark-800', border: 'border-dark-700', badge: 'bg-dark-700', text: 'text-gray-500' }
   }
 
   function getRankIcon(rank: number) {
@@ -117,16 +117,16 @@ export default function LeaderboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dark-950">
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center gap-3 mb-2">
           <Trophy className="w-7 h-7 text-emerald-600" />
-          <h1 className="text-3xl font-bold text-gray-900">Leaderboard</h1>
+          <h1 className="text-3xl font-bold text-white">Leaderboard</h1>
         </div>
-        <p className="text-gray-500 text-sm mb-6">See who is posting the best scores</p>
+        <p className="text-gray-400 text-sm mb-6">See who is posting the best scores</p>
 
         {/* Period Tabs */}
-        <div className="flex bg-white rounded-xl shadow-sm border border-gray-100 p-1 mb-8">
+        <div className="flex bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-1 mb-8">
           {[
             { key: 'today' as TimePeriod, label: 'Today', icon: Calendar },
             { key: 'week' as TimePeriod, label: 'This Week', icon: Calendar },
@@ -137,8 +137,8 @@ export default function LeaderboardPage() {
               onClick={() => setPeriod(tab.key)}
               className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all ${
                 period === tab.key
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  ? 'bg-emerald-900/30 text-emerald-400 border border-emerald-500 shadow-sm'
+                  : 'text-gray-400 hover:text-white border border-transparent'
               }`}
             >
               {tab.label}
@@ -152,15 +152,15 @@ export default function LeaderboardPage() {
             {[1, 2, 3, 4, 5].map(i => (
               <div
                 key={i}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 animate-pulse flex items-center gap-4"
+                className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 p-4 animate-pulse flex items-center gap-4"
               >
-                <div className="w-10 h-10 rounded-full bg-gray-200" />
-                <div className="w-10 h-10 rounded-full bg-gray-200" />
+                <div className="w-10 h-10 rounded-full bg-dark-700" />
+                <div className="w-10 h-10 rounded-full bg-dark-700" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-32 bg-gray-200 rounded" />
-                  <div className="h-3 w-24 bg-gray-200 rounded" />
+                  <div className="h-4 w-32 bg-dark-700 rounded" />
+                  <div className="h-3 w-24 bg-dark-700 rounded" />
                 </div>
-                <div className="h-6 w-12 bg-gray-200 rounded" />
+                <div className="h-6 w-12 bg-dark-700 rounded" />
               </div>
             ))}
           </div>
@@ -169,10 +169,10 @@ export default function LeaderboardPage() {
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <TrendingDown className="w-8 h-8 text-emerald-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+            <h3 className="text-lg font-semibold text-white mb-1">
               No completed rounds
             </h3>
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-400 text-sm">
               No scores have been posted {periodLabel.toLowerCase()}. Get out and play!
             </p>
           </div>
@@ -182,8 +182,8 @@ export default function LeaderboardPage() {
             {leaderboard.length >= 3 && (
               <div className="grid grid-cols-3 gap-3 mb-8">
                 {/* 2nd Place */}
-                <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-200 p-4 text-center mt-6">
-                  <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-2 overflow-hidden ring-2 ring-gray-300 ring-offset-2">
+                <div className="bg-dark-800 rounded-2xl shadow-sm border-2 border-dark-700 p-4 text-center mt-6">
+                  <div className="w-14 h-14 rounded-full bg-dark-700 flex items-center justify-center mx-auto mb-2 overflow-hidden ring-2 ring-gray-500 ring-offset-2 ring-offset-dark-800">
                     {leaderboard[1].profile.avatar_url ? (
                       <img
                         src={leaderboard[1].profile.avatar_url}
@@ -191,27 +191,27 @@ export default function LeaderboardPage() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-gray-600 font-bold">
+                      <span className="text-gray-300 font-bold">
                         {leaderboard[1].profile.full_name?.charAt(0)?.toUpperCase() || '?'}
                       </span>
                     )}
                   </div>
                   <Medal className="w-5 h-5 text-gray-400 mx-auto mb-1" />
-                  <p className="font-semibold text-gray-900 text-sm truncate">
+                  <p className="font-semibold text-white text-sm truncate">
                     {leaderboard[1].profile.full_name}
                   </p>
-                  <p className="text-2xl font-bold text-gray-700 mt-1">
+                  <p className="text-2xl font-bold text-gray-300 mt-1">
                     {leaderboard[1].bestScore}
                   </p>
-                  <p className="text-xs text-gray-400 truncate">{leaderboard[1].courseName}</p>
+                  <p className="text-xs text-gray-500 truncate">{leaderboard[1].courseName}</p>
                 </div>
 
                 {/* 1st Place */}
-                <div className="bg-white rounded-2xl shadow-md border-2 border-amber-300 p-4 text-center relative">
+                <div className="bg-dark-800 rounded-2xl shadow-md border-2 border-amber-500 p-4 text-center relative">
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-white text-xs font-bold px-3 py-0.5 rounded-full">
                     #1
                   </div>
-                  <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-2 overflow-hidden ring-2 ring-amber-400 ring-offset-2">
+                  <div className="w-16 h-16 rounded-full bg-amber-900/30 flex items-center justify-center mx-auto mb-2 overflow-hidden ring-2 ring-amber-400 ring-offset-2 ring-offset-dark-800">
                     {leaderboard[0].profile.avatar_url ? (
                       <img
                         src={leaderboard[0].profile.avatar_url}
@@ -225,18 +225,18 @@ export default function LeaderboardPage() {
                     )}
                   </div>
                   <Trophy className="w-5 h-5 text-amber-500 mx-auto mb-1" />
-                  <p className="font-semibold text-gray-900 text-sm truncate">
+                  <p className="font-semibold text-white text-sm truncate">
                     {leaderboard[0].profile.full_name}
                   </p>
-                  <p className="text-3xl font-bold text-emerald-600 mt-1">
+                  <p className="text-3xl font-bold text-emerald-400 mt-1">
                     {leaderboard[0].bestScore}
                   </p>
-                  <p className="text-xs text-gray-400 truncate">{leaderboard[0].courseName}</p>
+                  <p className="text-xs text-gray-500 truncate">{leaderboard[0].courseName}</p>
                 </div>
 
                 {/* 3rd Place */}
-                <div className="bg-white rounded-2xl shadow-sm border-2 border-orange-200 p-4 text-center mt-6">
-                  <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center mx-auto mb-2 overflow-hidden ring-2 ring-orange-300 ring-offset-2">
+                <div className="bg-dark-800 rounded-2xl shadow-sm border-2 border-orange-800 p-4 text-center mt-6">
+                  <div className="w-14 h-14 rounded-full bg-orange-900/30 flex items-center justify-center mx-auto mb-2 overflow-hidden ring-2 ring-orange-400 ring-offset-2 ring-offset-dark-800">
                     {leaderboard[2].profile.avatar_url ? (
                       <img
                         src={leaderboard[2].profile.avatar_url}
@@ -250,21 +250,21 @@ export default function LeaderboardPage() {
                     )}
                   </div>
                   <Medal className="w-5 h-5 text-orange-400 mx-auto mb-1" />
-                  <p className="font-semibold text-gray-900 text-sm truncate">
+                  <p className="font-semibold text-white text-sm truncate">
                     {leaderboard[2].profile.full_name}
                   </p>
-                  <p className="text-2xl font-bold text-gray-700 mt-1">
+                  <p className="text-2xl font-bold text-gray-300 mt-1">
                     {leaderboard[2].bestScore}
                   </p>
-                  <p className="text-xs text-gray-400 truncate">{leaderboard[2].courseName}</p>
+                  <p className="text-xs text-gray-500 truncate">{leaderboard[2].courseName}</p>
                 </div>
               </div>
             )}
 
             {/* Full Leaderboard List */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-dark-800 rounded-2xl shadow-sm border border-dark-700 overflow-hidden">
               {/* Header */}
-              <div className="grid grid-cols-12 gap-2 px-5 py-3 border-b border-gray-100 text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <div className="grid grid-cols-12 gap-2 px-5 py-3 border-b border-dark-700 text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <div className="col-span-1">Rank</div>
                 <div className="col-span-5">Player</div>
                 <div className="col-span-2 text-center">Best</div>
@@ -273,19 +273,19 @@ export default function LeaderboardPage() {
               </div>
 
               {/* Rows */}
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-dark-700">
                 {leaderboard.map((entry, index) => {
                   const style = getRankStyle(index)
                   return (
                     <div
                       key={entry.profile.id}
                       className={`grid grid-cols-12 gap-2 items-center px-5 py-3 ${
-                        index < 3 ? style.bg : 'hover:bg-gray-50'
+                        index < 3 ? style.bg : 'hover:bg-dark-700'
                       } transition-colors`}
                     >
                       <div className="col-span-1">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                          index < 3 ? `${style.badge} text-white` : 'bg-gray-100 text-gray-400'
+                          index < 3 ? `${style.badge} text-white` : 'bg-dark-700 text-gray-400'
                         }`}>
                           {index + 1}
                         </div>
@@ -305,26 +305,26 @@ export default function LeaderboardPage() {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-gray-900 text-sm truncate">
+                          <p className="font-medium text-white text-sm truncate">
                             {entry.profile.full_name}
                           </p>
-                          <p className="text-xs text-gray-400 truncate">{entry.courseName}</p>
+                          <p className="text-xs text-gray-500 truncate">{entry.courseName}</p>
                         </div>
                       </div>
                       <div className="col-span-2 text-center">
                         <span className={`text-base font-bold ${
-                          index === 0 ? 'text-emerald-600' : 'text-gray-800'
+                          index === 0 ? 'text-emerald-400' : 'text-gray-200'
                         }`}>
                           {entry.bestScore}
                         </span>
                       </div>
                       <div className="col-span-2 text-center">
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-400">
                           {entry.profile.handicap !== null ? entry.profile.handicap : '--'}
                         </span>
                       </div>
                       <div className="col-span-2 text-center">
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-400">
                           {entry.roundsPlayed}
                         </span>
                       </div>

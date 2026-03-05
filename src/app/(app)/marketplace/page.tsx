@@ -36,11 +36,11 @@ const CONDITION_OPTIONS: { value: ListingCondition; label: string }[] = [
 ];
 
 const CONDITION_COLORS: Record<ListingCondition, string> = {
-  new: 'bg-green-100 text-green-800 border-green-300',
-  like_new: 'bg-blue-100 text-blue-800 border-blue-300',
-  good: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-  fair: 'bg-orange-100 text-orange-800 border-orange-300',
-  poor: 'bg-red-100 text-red-800 border-red-300',
+  new: 'bg-green-900/30 text-green-400 border-green-800',
+  like_new: 'bg-blue-900/30 text-blue-400 border-blue-800',
+  good: 'bg-yellow-900/30 text-yellow-400 border-yellow-800',
+  fair: 'bg-orange-900/30 text-orange-400 border-orange-800',
+  poor: 'bg-red-900/30 text-red-400 border-red-800',
 };
 
 type SortOption = 'newest' | 'price_low' | 'price_high';
@@ -200,13 +200,13 @@ export default function MarketplacePage() {
     CATEGORY_OPTIONS.find((opt) => opt.value === c)?.label ?? c;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-dark-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Equipment Marketplace</h1>
-            <p className="text-gray-500 mt-1">Buy and sell golf equipment with fellow golfers</p>
+            <h1 className="text-3xl font-bold text-white">Equipment Marketplace</h1>
+            <p className="text-gray-400 mt-1">Buy and sell golf equipment with fellow golfers</p>
           </div>
           <button
             onClick={() => setShowCreateForm(true)}
@@ -218,23 +218,23 @@ export default function MarketplacePage() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="text"
                 placeholder="Search listings..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                className="w-full pl-10 pr-4 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
               />
             </div>
             <div className="flex gap-3">
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value as ListingCategory | '')}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
+                className="px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100"
               >
                 <option value="">All Categories</option>
                 {CATEGORY_OPTIONS.map((opt) => (
@@ -246,7 +246,7 @@ export default function MarketplacePage() {
               <select
                 value={conditionFilter}
                 onChange={(e) => setConditionFilter(e.target.value as ListingCondition | '')}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
+                className="px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100"
               >
                 <option value="">All Conditions</option>
                 {CONDITION_OPTIONS.map((opt) => (
@@ -258,7 +258,7 @@ export default function MarketplacePage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
+                className="px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100"
               >
                 <option value="newest">Newest First</option>
                 <option value="price_low">Price: Low to High</option>
@@ -267,11 +267,11 @@ export default function MarketplacePage() {
             </div>
           </div>
           {(searchQuery || categoryFilter || conditionFilter) && (
-            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-              <Filter className="w-4 h-4 text-gray-400" />
-              <span className="text-sm text-gray-500">Active filters:</span>
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-dark-700">
+              <Filter className="w-4 h-4 text-gray-500" />
+              <span className="text-sm text-gray-400">Active filters:</span>
               {searchQuery && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-700 text-xs rounded-full">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-dark-700 text-gray-300 text-xs rounded-full">
                   &quot;{searchQuery}&quot;
                   <button onClick={() => setSearchQuery('')}>
                     <X className="w-3 h-3" />
@@ -279,7 +279,7 @@ export default function MarketplacePage() {
                 </span>
               )}
               {categoryFilter && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-900/30 text-emerald-400 text-xs rounded-full">
                   {categoryLabel(categoryFilter)}
                   <button onClick={() => setCategoryFilter('')}>
                     <X className="w-3 h-3" />
@@ -287,7 +287,7 @@ export default function MarketplacePage() {
                 </span>
               )}
               {conditionFilter && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-900/30 text-blue-400 text-xs rounded-full">
                   {conditionLabel(conditionFilter)}
                   <button onClick={() => setConditionFilter('')}>
                     <X className="w-3 h-3" />
@@ -301,30 +301,30 @@ export default function MarketplacePage() {
         {/* Create Listing Modal */}
         {showCreateForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">List Equipment</h2>
+            <div className="bg-dark-800 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between p-6 border-b border-dark-700">
+                <h2 className="text-xl font-bold text-white">List Equipment</h2>
                 <button
                   onClick={() => setShowCreateForm(false)}
-                  className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1 hover:bg-dark-700 rounded-lg transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-500" />
+                  <X className="w-5 h-5 text-gray-400" />
                 </button>
               </div>
               <form onSubmit={handleCreateListing} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
                   <input
                     type="text"
                     required
                     value={formData.title}
                     onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="e.g., TaylorMade Stealth 2 Driver"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
                   <textarea
                     required
                     rows={3}
@@ -333,12 +333,12 @@ export default function MarketplacePage() {
                       setFormData((prev) => ({ ...prev, description: e.target.value }))
                     }
                     placeholder="Describe your equipment, condition details, why you're selling..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm resize-none"
+                    className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500 resize-none"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Category</label>
                     <select
                       value={formData.category}
                       onChange={(e) =>
@@ -347,7 +347,7 @@ export default function MarketplacePage() {
                           category: e.target.value as ListingCategory,
                         }))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
+                      className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100"
                     >
                       {CATEGORY_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -357,7 +357,7 @@ export default function MarketplacePage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Condition</label>
                     <select
                       value={formData.condition}
                       onChange={(e) =>
@@ -366,7 +366,7 @@ export default function MarketplacePage() {
                           condition: e.target.value as ListingCondition,
                         }))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
+                      className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100"
                     >
                       {CONDITION_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -378,9 +378,9 @@ export default function MarketplacePage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Price ($)</label>
                     <div className="relative">
-                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                       <input
                         type="number"
                         required
@@ -391,12 +391,12 @@ export default function MarketplacePage() {
                           setFormData((prev) => ({ ...prev, price: e.target.value }))
                         }
                         placeholder="0.00"
-                        className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                        className="w-full pl-10 pr-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-1">Location</label>
                     <input
                       type="text"
                       value={formData.location}
@@ -404,12 +404,12 @@ export default function MarketplacePage() {
                         setFormData((prev) => ({ ...prev, location: e.target.value }))
                       }
                       placeholder="City, State"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                      className="w-full px-3 py-2 bg-dark-700 border border-dark-600 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm text-gray-100 placeholder-gray-500"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
                     Images (up to 4)
                   </label>
                   <input
@@ -417,7 +417,7 @@ export default function MarketplacePage() {
                     accept="image/*"
                     multiple
                     onChange={handleImageChange}
-                    className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                    className="w-full text-sm text-gray-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-emerald-900/30 file:text-emerald-400 hover:file:bg-emerald-900/50"
                   />
                   {formData.images.length > 0 && (
                     <p className="text-xs text-gray-500 mt-1">
@@ -429,7 +429,7 @@ export default function MarketplacePage() {
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+                    className="flex-1 px-4 py-2.5 border border-dark-600 text-gray-300 rounded-lg hover:bg-dark-700 transition-colors font-medium text-sm"
                   >
                     Cancel
                   </button>
@@ -453,13 +453,13 @@ export default function MarketplacePage() {
           </div>
         ) : filteredListings.length === 0 ? (
           <div className="text-center py-20">
-            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+            <Package className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-400 mb-2">
               {listings.length === 0
                 ? 'No listings yet'
                 : 'No listings match your filters'}
             </h3>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-500 mb-6">
               {listings.length === 0
                 ? 'Be the first to list your equipment!'
                 : 'Try adjusting your search or filters.'}
@@ -479,13 +479,13 @@ export default function MarketplacePage() {
             {filteredListings.map((listing) => (
               <div
                 key={listing.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-dark-800 rounded-xl shadow-sm border border-dark-700 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() =>
                   setExpandedListing(expandedListing === listing.id ? null : listing.id)
                 }
               >
                 {/* Image */}
-                <div className="aspect-[4/3] bg-gray-100 relative">
+                <div className="aspect-[4/3] bg-dark-700 relative">
                   {listing.images && listing.images.length > 0 ? (
                     <img
                       src={listing.images[0]}
@@ -494,7 +494,7 @@ export default function MarketplacePage() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Package className="w-12 h-12 text-gray-300" />
+                      <Package className="w-12 h-12 text-gray-600" />
                     </div>
                   )}
                   {listing.condition && (
@@ -509,27 +509,27 @@ export default function MarketplacePage() {
                 {/* Card Content */}
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="font-semibold text-gray-900 line-clamp-1">{listing.title}</h3>
+                    <h3 className="font-semibold text-white line-clamp-1">{listing.title}</h3>
                     <span className="text-lg font-bold text-emerald-600 whitespace-nowrap">
                       ${listing.price?.toFixed(2)}
                     </span>
                   </div>
                   {listing.category && (
                     <div className="flex items-center gap-1 mb-2">
-                      <Tag className="w-3 h-3 text-gray-400" />
-                      <span className="text-xs text-gray-500">{categoryLabel(listing.category)}</span>
+                      <Tag className="w-3 h-3 text-gray-500" />
+                      <span className="text-xs text-gray-400">{categoryLabel(listing.category)}</span>
                     </div>
                   )}
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-sm text-gray-400">
                     <span>{listing.profiles?.full_name ?? 'Unknown Seller'}</span>
                     {listing.location && <span>{listing.location}</span>}
                   </div>
 
                   {/* Expanded Details */}
                   {expandedListing === listing.id && (
-                    <div className="mt-4 pt-4 border-t border-gray-100" onClick={(e) => e.stopPropagation()}>
+                    <div className="mt-4 pt-4 border-t border-dark-700" onClick={(e) => e.stopPropagation()}>
                       {listing.description && (
-                        <p className="text-sm text-gray-600 mb-4">{listing.description}</p>
+                        <p className="text-sm text-gray-400 mb-4">{listing.description}</p>
                       )}
                       {listing.images && listing.images.length > 1 && (
                         <div className="flex gap-2 mb-4 overflow-x-auto">
@@ -538,7 +538,7 @@ export default function MarketplacePage() {
                               key={idx}
                               src={img}
                               alt={`${listing.title} ${idx + 2}`}
-                              className="w-20 h-20 object-cover rounded-lg border border-gray-200 flex-shrink-0"
+                              className="w-20 h-20 object-cover rounded-lg border border-dark-700 flex-shrink-0"
                             />
                           ))}
                         </div>
