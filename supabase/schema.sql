@@ -162,6 +162,29 @@ create policy "Users can delete their own posts"
   on public.posts for delete using (auth.uid() = user_id);
 
 -- ============================================
+-- POST REACTIONS (Golf emoji reactions)
+-- ============================================
+create table public.post_reactions (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  post_id uuid references public.posts(id) on delete cascade not null,
+  emoji text not null,
+  created_at timestamptz default now(),
+  unique(user_id, post_id, emoji)
+);
+
+alter table public.post_reactions enable row level security;
+
+create policy "Reactions are viewable by everyone"
+  on public.post_reactions for select using (true);
+
+create policy "Users can add reactions"
+  on public.post_reactions for insert with check (auth.uid() = user_id);
+
+create policy "Users can remove their reactions"
+  on public.post_reactions for delete using (auth.uid() = user_id);
+
+-- ============================================
 -- LIKES
 -- ============================================
 create table public.likes (

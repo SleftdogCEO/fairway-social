@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase/client'
 import type { Round, Profile, Course } from '@/lib/types'
 import { MapPin, Clock, Users, Circle, Plus, X } from 'lucide-react'
 import { formatDistanceToNow, format, isToday, isTomorrow } from 'date-fns'
+import { WeatherWidget } from '@/components/weather-widget'
+import { QuickReactionBar } from '@/components/golf-reactions'
 
 type RoundWithJoins = Round & { profiles?: Profile; courses?: Course }
 
@@ -197,12 +199,21 @@ export default function LivePage() {
                   className="bg-white rounded-2xl shadow-sm border-l-4 border-l-emerald-500 border border-gray-100 overflow-hidden"
                 >
                   <div className="px-5 py-3 bg-emerald-50/50 border-b border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-emerald-600" />
-                      <span className="font-semibold text-gray-900 text-sm">{courseName}</span>
-                      <span className="text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full font-medium">
-                        {rounds.length} {rounds.length === 1 ? 'player' : 'players'}
-                      </span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 text-emerald-600" />
+                        <span className="font-semibold text-gray-900 text-sm">{courseName}</span>
+                        <span className="text-xs text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full font-medium">
+                          {rounds.length} {rounds.length === 1 ? 'player' : 'players'}
+                        </span>
+                      </div>
+                      {/* Inline weather for this course */}
+                      {rounds[0]?.courses?.city && (
+                        <WeatherWidget
+                          location={`${rounds[0].courses.city}, ${rounds[0].courses.state || ''}`}
+                          variant="inline"
+                        />
+                      )}
                     </div>
                   </div>
                   <div className="divide-y divide-gray-50">
@@ -233,6 +244,11 @@ export default function LivePage() {
                             {round.tee_time ? formatTeeTime(round.tee_time) : 'In progress'}
                           </div>
                         </div>
+                        {/* Quick react to this player */}
+                        <QuickReactionBar
+                          recipientName={round.profiles?.full_name || 'them'}
+                          onSend={() => {/* TODO: store reaction */}}
+                        />
                       </div>
                     ))}
                   </div>
@@ -287,17 +303,25 @@ export default function LivePage() {
                       </span>
                     </div>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-medium text-blue-600">
-                      {round.tee_time ? format(new Date(round.tee_time), 'h:mm a') : '--'}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {round.tee_time ? (
-                        isToday(new Date(round.tee_time)) ? 'Today' :
-                        isTomorrow(new Date(round.tee_time)) ? 'Tomorrow' :
-                        format(new Date(round.tee_time), 'MMM d')
-                      ) : ''}
-                    </p>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    {round.courses?.city && (
+                      <WeatherWidget
+                        location={`${round.courses.city}, ${round.courses.state || ''}`}
+                        variant="inline"
+                      />
+                    )}
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-blue-600">
+                        {round.tee_time ? format(new Date(round.tee_time), 'h:mm a') : '--'}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {round.tee_time ? (
+                          isToday(new Date(round.tee_time)) ? 'Today' :
+                          isTomorrow(new Date(round.tee_time)) ? 'Tomorrow' :
+                          format(new Date(round.tee_time), 'MMM d')
+                        ) : ''}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}

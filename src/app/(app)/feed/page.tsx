@@ -5,6 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 import type { Post, Profile } from '@/lib/types'
 import { Heart, MessageCircle, Image as ImageIcon, Send, MapPin } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { DailyDadJoke } from '@/components/daily-dad-joke'
+import { GolfReactionPicker } from '@/components/golf-reactions'
+import { GOLF_REACTIONS } from '@/lib/golf-reactions'
 
 export default function FeedPage() {
   const supabase = createClient()
@@ -18,6 +21,7 @@ export default function FeedPage() {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set())
+  const [postReactions, setPostReactions] = useState<Record<string, Record<string, { count: number; reacted: boolean }>>>({})
 
   useEffect(() => {
     fetchUser()
@@ -37,6 +41,7 @@ export default function FeedPage() {
     if (data) {
       setUser(data)
       fetchLikedPosts(authUser.id)
+      fetchReactions(authUser.id)
     }
   }
 
@@ -133,6 +138,64 @@ export default function FeedPage() {
     }
   }
 
+  async function fetchReactions(userId: string) {
+    const { data } = await supabase
+      .from('post_reactions')
+      .select('post_id, emoji, user_id')
+
+    if (data) {
+      const grouped: Record<string, Record<string, { count: number; reacted: boolean }>> = {}
+      for (const r of data) {
+        if (!grouped[r.post_id]) grouped[r.post_id] = {}
+        if (!grouped[r.post_id][r.emoji]) grouped[r.post_id][r.emoji] = { count: 0, reacted: false }
+        grouped[r.post_id][r.emoji].count++
+        if (r.user_id === userId) grouped[r.post_id][r.emoji].reacted = true
+      }
+      setPostReactions(grouped)
+    }
+  }
+
+  async function addReaction(postId: string, emoji: string) {
+    if (!user) return
+    // Optimistic update
+    setPostReactions(prev => {
+      const next = { ...prev }
+      if (!next[postId]) next[postId] = {}
+      if (!next[postId][emoji]) next[postId][emoji] = { count: 0, reacted: false }
+      next[postId][emoji] = { count: next[postId][emoji].count + 1, reacted: true }
+      return next
+    })
+    await supabase.from('post_reactions').upsert(
+      { post_id: postId, user_id: user.id, emoji },
+      { onConflict: 'post_id,user_id,emoji' }
+    )
+  }
+
+  async function removeReaction(postId: string, emoji: string) {
+    if (!user) return
+    setPostReactions(prev => {
+      const next = { ...prev }
+      if (next[postId]?.[emoji]) {
+        next[postId][emoji] = { count: Math.max(0, next[postId][emoji].count - 1), reacted: false }
+      }
+      return next
+    })
+    await supabase.from('post_reactions').delete()
+      .eq('post_id', postId)
+      .eq('user_id', user.id)
+      .eq('emoji', emoji)
+  }
+
+  function getReactionsForPost(postId: string) {
+    const reactions = postReactions[postId] || {}
+    return GOLF_REACTIONS.map(r => ({
+      emoji: r.emoji,
+      label: r.label,
+      count: reactions[r.emoji]?.count || 0,
+      reacted: reactions[r.emoji]?.reacted || false,
+    }))
+  }
+
   async function toggleLike(postId: string) {
     if (!user) return
 
@@ -173,6 +236,11 @@ export default function FeedPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Feed</h1>
+
+        {/* Daily Dad Joke */}
+        <div className="mb-6">
+          <DailyDadJoke variant="banner" />
+        </div>
 
         {/* Create Post Form */}
         {user && (
@@ -361,6 +429,15 @@ export default function FeedPage() {
                     <MessageCircle className="w-5 h-5" />
                     {post.comments_count > 0 && post.comments_count}
                   </button>
+                </div>
+
+                {/* Golf Reactions */}
+                <div className="px-5 pb-4">
+                  <GolfReactionPicker
+                    reactions={getReactionsForPost(post.id)}
+                    onReact={(r) => addReaction(post.id, r.emoji)}
+                    onRemoveReaction={(emoji) => removeReaction(post.id, emoji)}
+                  />
                 </div>
               </div>
             ))}

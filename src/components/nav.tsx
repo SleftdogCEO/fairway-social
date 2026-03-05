@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Trophy,
+  Calendar,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -21,6 +22,7 @@ const navLinks = [
   { href: "/live", label: "Live", icon: Activity },
   { href: "/marketplace", label: "Marketplace", icon: ShoppingBag },
   { href: "/network", label: "Network", icon: Users },
+  { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { href: "/profile", label: "Profile", icon: User },
 ];
