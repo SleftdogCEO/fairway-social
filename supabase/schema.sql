@@ -482,6 +482,28 @@ create policy "Users can upload listing images"
   with check (bucket_id = 'listings' and auth.uid()::text = (storage.foldername(name))[1]);
 
 -- ============================================
+-- MEETUP MESSAGES (Trash talk / hype thread)
+-- ============================================
+create table public.meetup_messages (
+  id uuid default uuid_generate_v4() primary key,
+  meetup_id uuid references public.meetups(id) on delete cascade not null,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  content text not null,
+  created_at timestamptz default now()
+);
+
+alter table public.meetup_messages enable row level security;
+
+create policy "Meetup messages are viewable by everyone"
+  on public.meetup_messages for select using (true);
+
+create policy "Users can send meetup messages"
+  on public.meetup_messages for insert with check (auth.uid() = user_id);
+
+create policy "Users can delete their own meetup messages"
+  on public.meetup_messages for delete using (auth.uid() = user_id);
+
+-- ============================================
 -- SEED DATA: Sample courses
 -- ============================================
 insert into public.courses (name, parent_club, city, state, lat, lng, holes, par) values

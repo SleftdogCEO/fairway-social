@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import Link from 'next/link'
 import {
   Plus,
   MapPin,
@@ -13,6 +14,7 @@ import {
   MessageCircle,
   ChevronRight,
   ChevronDown,
+  ArrowRight,
 } from 'lucide-react'
 import { format, formatDistanceToNow, isPast } from 'date-fns'
 import { WeatherWidget } from '@/components/weather-widget'
@@ -811,18 +813,14 @@ export default function MeetupsPage() {
                         </span>
                       )}
 
-                      <button
-                        onClick={() => setExpandedMeetup(isExpanded ? null : meetup.id)}
-                        className="ml-auto inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-400 hover:text-white hover:bg-dark-700 transition-colors"
+                      <Link
+                        href={`/meetups/${meetup.id}`}
+                        className="ml-auto inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-emerald-400 hover:text-emerald-300 hover:bg-emerald-900/30 font-medium transition-colors"
                       >
                         <MessageCircle className="w-4 h-4" />
-                        Details
-                        {isExpanded ? (
-                          <ChevronDown className="w-3.5 h-3.5" />
-                        ) : (
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        )}
-                      </button>
+                        Match Room
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
                     </div>
                   </div>
 

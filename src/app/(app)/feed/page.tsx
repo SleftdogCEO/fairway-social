@@ -8,6 +8,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { DailyDadJoke } from '@/components/daily-dad-joke'
 import { GolfReactionPicker } from '@/components/golf-reactions'
 import { GOLF_REACTIONS } from '@/lib/golf-reactions'
+import { TodaysRounds } from '@/components/todays-rounds'
 
 export default function FeedPage() {
   const supabase = createClient()
@@ -236,6 +237,11 @@ export default function FeedPage() {
     <div className="min-h-screen bg-dark-950">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-white mb-6">Feed</h1>
+
+        {/* Today's Rounds */}
+        <div className="mb-6">
+          <TodaysRounds />
+        </div>
 
         {/* Daily Dad Joke */}
         <div className="mb-6">

@@ -18,6 +18,7 @@ export type Profile = {
 export type Course = {
   id: string
   name: string
+  parent_club: string | null
   address: string | null
   city: string | null
   state: string | null
@@ -141,4 +142,35 @@ export type Message = {
   created_at: string
   sender?: Profile
   receiver?: Profile
+}
+
+export type MeetupMessage = {
+  id: string
+  meetup_id: string
+  user_id: string
+  content: string
+  created_at: string
+  profiles?: Profile
+}
+
+export type MeetupAttendee = {
+  id: string
+  meetup_id: string
+  user_id: string
+  created_at: string
+  profiles?: Profile
+}
+
+export type Meetup = {
+  id: string
+  title: string
+  description: string | null
+  course_id: string | null
+  tee_time: string
+  max_players: number
+  organizer_id: string
+  created_at: string
+  profiles?: Profile
+  courses?: Course
+  meetup_attendees?: MeetupAttendee[]
 }
