@@ -244,7 +244,7 @@ export default function MatchRoomPage() {
       `SUMMARY:${meetup.title}`,
       `LOCATION:${location}`,
       `DESCRIPTION:${meetup.title}\\nPlayers: ${players}\\n\\nOrganized on Sleft Golf`,
-      `URL:https://fairway-social.vercel.app/meetups/${meetup.id}`,
+      `URL:https://sleftgolf.vercel.app/meetups/${meetup.id}`,
       'END:VEVENT',
       'END:VCALENDAR',
     ].join('\r\n')
@@ -263,7 +263,7 @@ export default function MatchRoomPage() {
     if (!meetup) return
     const courseName = meetup.courses?.name || 'a round of golf'
     const time = format(new Date(meetup.tee_time), 'EEEE, MMM d \'at\' h:mm a')
-    const link = `https://fairway-social.vercel.app/meetups/${meetup.id}`
+    const link = `https://sleftgolf.vercel.app/meetups/${meetup.id}`
     const body = `Hey! Join me for ${courseName} on ${time}. Tap to join: ${link}`
 
     // Try native share first (works great on mobile)
@@ -429,7 +429,7 @@ export default function MatchRoomPage() {
                 Add to Calendar
               </button>
               <button
-                onClick={() => copyToClipboard(`https://fairway-social.vercel.app/meetups/${meetup.id}`, 'link')}
+                onClick={() => copyToClipboard(`https://sleftgolf.vercel.app/meetups/${meetup.id}`, 'link')}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-dark-700 text-gray-300 hover:bg-dark-600 hover:text-white border border-dark-600 transition-colors"
               >
                 {copied === 'link' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
