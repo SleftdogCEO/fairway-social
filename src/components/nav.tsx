@@ -23,6 +23,7 @@ const navLinks = [
   { href: "/network", label: "Network", icon: Users },
   { href: "/calendar", label: "Calendar", icon: Calendar },
   { href: "/meetups", label: "Meetups", icon: Users },
+  { href: "/propose", label: "Propose", icon: Calendar },
   { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
   { href: "/profile", label: "Profile", icon: User },
 ];
