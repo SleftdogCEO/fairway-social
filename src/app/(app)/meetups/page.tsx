@@ -369,40 +369,48 @@ export default function MeetupsPage() {
                   />
                 </div>
 
-                {/* Club / Course selection */}
+                {/* Course selection */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                    Golf Club or Course
+                    Course
                   </label>
-                  {/* Club name (free text for clubs like Ibis, PGA National, etc.) */}
                   <input
                     type="text"
                     value={formClub}
                     onChange={e => setFormClub(e.target.value)}
-                    placeholder='e.g., "Ibis Golf & Country Club"'
+                    placeholder="Search courses..."
                     className="w-full bg-dark-700 border border-dark-600 text-gray-100 placeholder-gray-500 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors mb-2"
                   />
-                  {/* Sub-course from DB or free text */}
-                  <select
-                    value={formCourseId}
-                    onChange={e => setFormCourseId(e.target.value)}
-                    className="w-full bg-dark-700 border border-dark-600 text-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-colors appearance-none"
-                  >
-                    <option value="">Select specific course (optional)...</option>
+                  <div className="max-h-48 overflow-y-auto bg-dark-700 border border-dark-600 rounded-xl">
                     {courses
                       .filter(c => !formClub || c.name.toLowerCase().includes(formClub.toLowerCase()) || c.parent_club?.toLowerCase().includes(formClub.toLowerCase()))
                       .map(course => (
-                        <option key={course.id} value={course.id}>
-                          {course.name}{course.city ? ` - ${course.city}` : ''}{course.state ? `, ${course.state}` : ''}
-                        </option>
+                        <button
+                          key={course.id}
+                          type="button"
+                          onClick={() => {
+                            setFormCourseId(course.id)
+                            setFormClub(course.parent_club ? `${course.parent_club} - ${course.name}` : course.name)
+                          }}
+                          className={`w-full text-left px-4 py-2.5 text-sm transition-colors border-b border-dark-600 last:border-b-0 ${
+                            formCourseId === course.id
+                              ? 'bg-emerald-900/40 text-emerald-300'
+                              : 'text-gray-300 hover:bg-dark-600'
+                          }`}
+                        >
+                          <span className="font-medium">{course.name}</span>
+                          {course.parent_club && (
+                            <span className="text-gray-500 text-xs ml-2">{course.parent_club}</span>
+                          )}
+                          {course.city && (
+                            <span className="text-gray-500 text-xs ml-1">· {course.city}, {course.state}</span>
+                          )}
+                        </button>
                       ))}
                     {courses.filter(c => !formClub || c.name.toLowerCase().includes(formClub.toLowerCase()) || c.parent_club?.toLowerCase().includes(formClub.toLowerCase())).length === 0 && (
-                      <option value="" disabled>No matching courses found</option>
+                      <p className="px-4 py-3 text-sm text-gray-500">No courses found</p>
                     )}
-                  </select>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Type the club name, then pick the specific course if applicable
-                  </p>
+                  </div>
                 </div>
 
                 {/* Date & Time */}
