@@ -33,23 +33,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Redirect unauthenticated users to login for protected routes
-  const protectedPaths = ['/dashboard', '/feed', '/live', '/calendar', '/meetups', '/leaderboard', '/marketplace', '/network', '/rounds', '/profile']
-  const isProtected = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
-
-  if (!user && isProtected) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    url.searchParams.set('redirect', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
-  }
-
-  // Redirect authenticated users away from auth pages
-  if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/feed'
-    return NextResponse.redirect(url)
-  }
+  // Auth disabled for now — all pages are publicly accessible
 
   return supabaseResponse
 }
