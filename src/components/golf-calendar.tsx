@@ -14,6 +14,7 @@ import {
   Calendar as CalendarIcon,
 } from 'lucide-react'
 import { WeatherWidget } from '@/components/weather-widget'
+import { getGuestId } from '@/lib/guest'
 
 type RoundWithJoins = Round & { profiles?: Profile; courses?: Course }
 
@@ -110,8 +111,8 @@ export function GolfCalendar() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) setUserId(user.id)
+      const id = getGuestId()
+      if (id) setUserId(id)
 
       const { data: courseData } = await supabase
         .from('courses')

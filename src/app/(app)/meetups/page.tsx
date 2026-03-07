@@ -18,6 +18,8 @@ import {
 } from 'lucide-react'
 import { format, formatDistanceToNow, isPast } from 'date-fns'
 import { WeatherWidget } from '@/components/weather-widget'
+import { useGuest } from '@/hooks/use-guest'
+import { GuestPrompt } from '@/components/guest-prompt'
 
 type MeetupAttendee = {
   id: string
@@ -79,6 +81,7 @@ type Filter = 'upcoming' | 'my_meetups' | 'past'
 
 export default function MeetupsPage() {
   const supabase = createClient()
+  const { profile: guestProfile, showNamePrompt, setName } = useGuest()
 
   const [meetups, setMeetups] = useState<Meetup[]>([])
   const [loading, setLoading] = useState(true)
@@ -102,24 +105,16 @@ export default function MeetupsPage() {
   const [formDescription, setFormDescription] = useState('')
 
   useEffect(() => {
-    fetchUser()
     fetchMeetups()
     fetchCourses()
     fetchAllUsers()
   }, [])
 
-  async function fetchUser() {
-    const { data: { user: authUser } } = await supabase.auth.getUser()
-    if (!authUser) return
-
-    const { data } = await supabase
-      .from('profiles')
-      .select('id, full_name, avatar_url')
-      .eq('id', authUser.id)
-      .single()
-
-    if (data) setUser(data)
-  }
+  useEffect(() => {
+    if (guestProfile) {
+      setUser({ id: guestProfile.id, full_name: guestProfile.full_name, avatar_url: guestProfile.avatar_url })
+    }
+  }, [guestProfile])
 
   async function fetchMeetups() {
     setLoading(true)
@@ -302,6 +297,7 @@ export default function MeetupsPage() {
 
   return (
     <div className="min-h-screen bg-dark-950">
+      {showNamePrompt && <GuestPrompt onSubmit={setName} />}
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

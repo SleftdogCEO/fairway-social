@@ -18,14 +18,9 @@ export default function HomePage() {
             <span className="text-2xl">&#9971;</span>
             <span className="text-xl font-bold text-white">Fairway Social</span>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-medium text-emerald-200 hover:text-white transition-colors">
-              Log in
-            </Link>
-            <Link href="/signup" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-emerald-900 hover:bg-emerald-50 transition-colors">
-              Sign up free
-            </Link>
-          </div>
+          <Link href="/feed" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-emerald-900 hover:bg-emerald-50 transition-colors">
+            Jump in
+          </Link>
         </nav>
 
         <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-20 text-center">
@@ -38,7 +33,7 @@ export default function HomePage() {
             and connect with golfers who share your passion for the game.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
-            <Link href="/signup" className="rounded-full bg-white px-8 py-3 text-base font-semibold text-emerald-900 shadow-lg hover:bg-emerald-50 transition-colors">
+            <Link href="/feed" className="rounded-full bg-white px-8 py-3 text-base font-semibold text-emerald-900 shadow-lg hover:bg-emerald-50 transition-colors">
               Get started
             </Link>
             <Link href="#features" className="rounded-full border border-emerald-400 px-8 py-3 text-base font-semibold text-emerald-200 hover:bg-emerald-800/50 transition-colors">
@@ -105,8 +100,8 @@ export default function HomePage() {
           <p className="mx-auto mt-4 max-w-xl text-lg text-emerald-200">
             Join the community of golfers who are making every round count.
           </p>
-          <Link href="/signup" className="mt-8 inline-block rounded-full bg-white px-8 py-3 text-base font-semibold text-emerald-900 shadow-lg hover:bg-emerald-50 transition-colors">
-            Create your free account
+          <Link href="/feed" className="mt-8 inline-block rounded-full bg-white px-8 py-3 text-base font-semibold text-emerald-900 shadow-lg hover:bg-emerald-50 transition-colors">
+            Start playing
           </Link>
         </div>
       </section>

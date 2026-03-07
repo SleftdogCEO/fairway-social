@@ -7,11 +7,14 @@ import { MapPin, Clock, Users, Circle, Plus, X } from 'lucide-react'
 import { formatDistanceToNow, format, isToday, isTomorrow } from 'date-fns'
 import { WeatherWidget } from '@/components/weather-widget'
 import { QuickReactionBar } from '@/components/golf-reactions'
+import { useGuest } from '@/hooks/use-guest'
+import { GuestPrompt } from '@/components/guest-prompt'
 
 type RoundWithJoins = Round & { profiles?: Profile; courses?: Course }
 
 export default function LivePage() {
   const supabase = createClient()
+  const { profile: guestProfile, showNamePrompt, setName } = useGuest()
 
   const [activeRounds, setActiveRounds] = useState<RoundWithJoins[]>([])
   const [plannedRounds, setPlannedRounds] = useState<RoundWithJoins[]>([])
@@ -28,23 +31,13 @@ export default function LivePage() {
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    fetchUser()
     fetchRounds()
     fetchCourses()
   }, [])
 
-  async function fetchUser() {
-    const { data: { user: authUser } } = await supabase.auth.getUser()
-    if (!authUser) return
-
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', authUser.id)
-      .single()
-
-    if (data) setUser(data)
-  }
+  useEffect(() => {
+    if (guestProfile) setUser(guestProfile)
+  }, [guestProfile])
 
   async function fetchCourses() {
     const { data } = await supabase
@@ -165,6 +158,7 @@ export default function LivePage() {
 
   return (
     <div className="min-h-screen bg-dark-950">
+      {showNamePrompt && <GuestPrompt onSubmit={setName} />}
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-white">Live Activity</h1>

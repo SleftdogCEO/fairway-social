@@ -17,6 +17,8 @@ import {
   Users,
   UserCheck,
 } from 'lucide-react';
+import { useGuest } from '@/hooks/use-guest';
+import { GuestPrompt } from '@/components/guest-prompt';
 
 type NetworkTab = 'discover' | 'network' | 'pending';
 
@@ -27,6 +29,7 @@ interface ConnectionWithProfiles extends Connection {
 
 export default function NetworkPage() {
   const supabase = createClient();
+  const { guestId, profile: guestProfile, showNamePrompt, setName } = useGuest();
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -37,36 +40,39 @@ export default function NetworkPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
+    if (!guestId) {
+      // Still fetch profiles even without a guest id
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('is_public', true);
+      if (data) setProfiles(data as Profile[]);
       setLoading(false);
       return;
     }
-    setCurrentUserId(user.id);
+
+    setLoading(true);
+    setCurrentUserId(guestId);
 
     const [profilesRes, connectionsRes] = await Promise.all([
       supabase
         .from('profiles')
         .select('*')
         .eq('is_public', true)
-        .neq('id', user.id),
+        .neq('id', guestId),
       supabase
         .from('connections')
         .select(
           '*, requester:profiles!requester_id(*), addressee:profiles!addressee_id(*)'
         )
-        .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`),
+        .or(`requester_id.eq.${guestId},addressee_id.eq.${guestId}`),
     ]);
 
     if (profilesRes.data) setProfiles(profilesRes.data as Profile[]);
     if (connectionsRes.data) setConnections(connectionsRes.data as ConnectionWithProfiles[]);
 
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, guestId]);
 
   useEffect(() => {
     fetchData();
@@ -358,6 +364,7 @@ export default function NetworkPage() {
 
   return (
     <div className="min-h-screen bg-dark-950">
+      {showNamePrompt && <GuestPrompt onSubmit={setName} />}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">

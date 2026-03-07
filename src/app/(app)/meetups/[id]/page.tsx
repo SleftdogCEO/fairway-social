@@ -19,9 +19,13 @@ import {
   MessageCircle,
   Flame,
   ChevronDown,
+  Share2,
+  Smartphone,
 } from 'lucide-react'
 import { format, formatDistanceToNow, isPast, differenceInHours, differenceInMinutes, differenceInSeconds } from 'date-fns'
 import { WeatherWidget } from '@/components/weather-widget'
+import { useGuest } from '@/hooks/use-guest'
+import { GuestPrompt } from '@/components/guest-prompt'
 
 export default function MatchRoomPage() {
   const { id } = useParams<{ id: string }>()
@@ -29,6 +33,7 @@ export default function MatchRoomPage() {
   const supabase = createClient()
   const chatEndRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const { profile: guestProfile, showNamePrompt, setName } = useGuest()
 
   const [meetup, setMeetup] = useState<Meetup | null>(null)
   const [messages, setMessages] = useState<MeetupMessage[]>([])
@@ -40,20 +45,10 @@ export default function MatchRoomPage() {
   const [countdown, setCountdown] = useState('')
   const [showPlayerEmails, setShowPlayerEmails] = useState(false)
 
-  // Fetch user
+  // Set user from guest profile
   useEffect(() => {
-    async function fetchUser() {
-      const { data: { user: authUser } } = await supabase.auth.getUser()
-      if (!authUser) return
-      const { data } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .single()
-      if (data) setUser(data)
-    }
-    fetchUser()
-  }, [supabase])
+    if (guestProfile) setUser(guestProfile)
+  }, [guestProfile])
 
   // Fetch meetup
   const fetchMeetup = useCallback(async () => {
@@ -236,6 +231,30 @@ export default function MatchRoomPage() {
     URL.revokeObjectURL(url)
   }
 
+  // Invite via text message
+  function inviteViaText() {
+    if (!meetup) return
+    const courseName = meetup.courses?.name || 'a round of golf'
+    const time = format(new Date(meetup.tee_time), 'EEEE, MMM d \'at\' h:mm a')
+    const link = `https://fairway-social.vercel.app/meetups/${meetup.id}`
+    const body = `Hey! Join me for ${courseName} on ${time}. Tap to join: ${link}`
+
+    // Try native share first (works great on mobile)
+    if (navigator.share) {
+      navigator.share({
+        title: meetup.title,
+        text: body,
+        url: link,
+      }).catch(() => {
+        // Fallback to SMS
+        window.open(`sms:?&body=${encodeURIComponent(body)}`)
+      })
+    } else {
+      // Desktop fallback: open SMS URI
+      window.open(`sms:?&body=${encodeURIComponent(body)}`)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-dark-950 flex items-center justify-center">
@@ -264,6 +283,7 @@ export default function MatchRoomPage() {
 
   return (
     <div className="min-h-screen bg-dark-950">
+      {showNamePrompt && <GuestPrompt onSubmit={setName} />}
       <div className="max-w-4xl mx-auto px-4 py-6">
 
         {/* Back button */}
@@ -331,6 +351,13 @@ export default function MatchRoomPage() {
 
             {/* Quick actions */}
             <div className="flex flex-wrap gap-2 mt-4">
+              <button
+                onClick={inviteViaText}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
+              >
+                <Smartphone className="w-4 h-4" />
+                Invite via Text
+              </button>
               <button
                 onClick={downloadCalendarFile}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-dark-700 text-gray-300 hover:bg-dark-600 hover:text-white border border-dark-600 transition-colors"

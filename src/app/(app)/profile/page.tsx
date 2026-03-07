@@ -18,6 +18,8 @@ import {
   MessageSquare,
   Flag,
 } from 'lucide-react';
+import { useGuest } from '@/hooks/use-guest';
+import { GuestPrompt } from '@/components/guest-prompt';
 
 type ProfileTab = 'rounds' | 'posts' | 'listings';
 
@@ -35,6 +37,7 @@ interface ProfileForm {
 
 export default function ProfilePage() {
   const supabase = createClient();
+  const { guestId, profile: guestProfile, showNamePrompt, setName } = useGuest();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,19 +62,17 @@ export default function ProfilePage() {
   });
 
   const fetchProfile = useCallback(async () => {
-    setLoading(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
+    if (!guestId) {
       setLoading(false);
       return;
     }
 
+    setLoading(true);
+
     const { data: profileData } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', user.id)
+      .eq('id', guestId)
       .single();
 
     if (profileData) {
@@ -95,41 +96,38 @@ export default function ProfilePage() {
       .from('connections')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'accepted')
-      .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
+      .or(`requester_id.eq.${guestId},addressee_id.eq.${guestId}`);
 
     setConnectionsCount(count ?? 0);
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, guestId]);
 
   const fetchTabData = useCallback(async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!guestId) return;
 
     if (activeTab === 'rounds') {
       const { data } = await supabase
         .from('rounds')
         .select('*, courses(*)')
-        .eq('user_id', user.id)
+        .eq('user_id', guestId)
         .order('created_at', { ascending: false });
       if (data) setRounds(data as Round[]);
     } else if (activeTab === 'posts') {
       const { data } = await supabase
         .from('posts')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', guestId)
         .order('created_at', { ascending: false });
       if (data) setPosts(data as Post[]);
     } else if (activeTab === 'listings') {
       const { data } = await supabase
         .from('listings')
         .select('*')
-        .eq('seller_id', user.id)
+        .eq('seller_id', guestId)
         .order('created_at', { ascending: false });
       if (data) setListings(data as Listing[]);
     }
-  }, [supabase, activeTab]);
+  }, [supabase, activeTab, guestId]);
 
   useEffect(() => {
     fetchProfile();
@@ -254,7 +252,8 @@ export default function ProfilePage() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-dark-950 flex items-center justify-center">
-        <p className="text-gray-400">Unable to load profile. Please sign in.</p>
+        {showNamePrompt && <GuestPrompt onSubmit={setName} />}
+        {!showNamePrompt && <p className="text-gray-400">Unable to load profile.</p>}
       </div>
     );
   }

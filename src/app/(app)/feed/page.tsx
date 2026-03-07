@@ -9,10 +9,13 @@ import { DailyDadJoke } from '@/components/daily-dad-joke'
 import { GolfReactionPicker } from '@/components/golf-reactions'
 import { GOLF_REACTIONS } from '@/lib/golf-reactions'
 import { TodaysRounds } from '@/components/todays-rounds'
+import { useGuest } from '@/hooks/use-guest'
+import { GuestPrompt } from '@/components/guest-prompt'
 
 export default function FeedPage() {
   const supabase = createClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { guestId, profile: guestProfile, showNamePrompt, setName } = useGuest()
 
   const [posts, setPosts] = useState<Post[]>([])
   const [newPostContent, setNewPostContent] = useState('')
@@ -25,26 +28,16 @@ export default function FeedPage() {
   const [postReactions, setPostReactions] = useState<Record<string, Record<string, { count: number; reacted: boolean }>>>({})
 
   useEffect(() => {
-    fetchUser()
     fetchPosts()
   }, [])
 
-  async function fetchUser() {
-    const { data: { user: authUser } } = await supabase.auth.getUser()
-    if (!authUser) return
-
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', authUser.id)
-      .single()
-
-    if (data) {
-      setUser(data)
-      fetchLikedPosts(authUser.id)
-      fetchReactions(authUser.id)
+  useEffect(() => {
+    if (guestProfile) {
+      setUser(guestProfile)
+      fetchLikedPosts(guestProfile.id)
+      fetchReactions(guestProfile.id)
     }
-  }
+  }, [guestProfile])
 
   async function fetchLikedPosts(userId: string) {
     const { data } = await supabase
@@ -235,6 +228,7 @@ export default function FeedPage() {
 
   return (
     <div className="min-h-screen bg-dark-950">
+      {showNamePrompt && <GuestPrompt onSubmit={setName} />}
       <div className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-white mb-6">Feed</h1>
 

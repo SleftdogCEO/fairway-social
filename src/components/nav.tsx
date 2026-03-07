@@ -1,21 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Home,
   Activity,
   ShoppingBag,
   Users,
   User,
-  LogOut,
   Menu,
   X,
   Trophy,
   Calendar,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { getGuestName } from "@/lib/guest";
 
 const navLinks = [
   { href: "/feed", label: "Feed", icon: Home },
@@ -30,43 +29,17 @@ const navLinks = [
 
 export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [user, setUser] = useState<{ email?: string; full_name?: string; avatar_url?: string } | null>(null);
   const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user: currentUser },
-      } = await supabase.auth.getUser();
-      if (currentUser) {
-        setUser({
-          email: currentUser.email,
-          full_name: currentUser.user_metadata?.full_name,
-          avatar_url: currentUser.user_metadata?.avatar_url,
-        });
-      }
-    };
-    getUser();
-  }, [supabase.auth]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
-  };
+  const guestName = getGuestName();
 
   const getInitials = () => {
-    if (user?.full_name) {
-      return user.full_name
+    if (guestName) {
+      return guestName
         .split(" ")
         .map((n) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2);
-    }
-    if (user?.email) {
-      return user.email[0].toUpperCase();
     }
     return "?";
   };
@@ -107,24 +80,12 @@ export default function Nav() {
 
             {/* User section (desktop) */}
             <div className="hidden md:flex items-center gap-3">
-              {user?.avatar_url ? (
-                <img
-                  src={user.avatar_url}
-                  alt="Avatar"
-                  className="w-8 h-8 rounded-full border-2 border-dark-600"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-emerald-500 border-2 border-dark-600 flex items-center justify-center text-xs font-bold">
-                  {getInitials()}
-                </div>
+              <div className="w-8 h-8 rounded-full bg-emerald-500 border-2 border-dark-600 flex items-center justify-center text-xs font-bold">
+                {getInitials()}
+              </div>
+              {guestName && (
+                <span className="text-sm text-gray-400">{guestName}</span>
               )}
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-1 text-gray-500 hover:text-white transition-colors text-sm"
-              >
-                <LogOut size={16} />
-                <span>Logout</span>
-              </button>
             </div>
 
             {/* Mobile hamburger */}
@@ -151,23 +112,12 @@ export default function Nav() {
           <div className="fixed top-0 right-0 bottom-0 w-72 bg-dark-900 text-white shadow-2xl pt-20 px-4">
             {/* User info */}
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-dark-700">
-              {user?.avatar_url ? (
-                <img
-                  src={user.avatar_url}
-                  alt="Avatar"
-                  className="w-10 h-10 rounded-full border-2 border-emerald-400"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-emerald-500 border-2 border-emerald-400 flex items-center justify-center text-sm font-bold">
-                  {getInitials()}
-                </div>
-              )}
+              <div className="w-10 h-10 rounded-full bg-emerald-500 border-2 border-emerald-400 flex items-center justify-center text-sm font-bold">
+                {getInitials()}
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate">
-                  {user?.full_name || "Golfer"}
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {user?.email}
+                  {guestName || "Golfer"}
                 </p>
               </div>
             </div>
@@ -194,15 +144,6 @@ export default function Nav() {
                 );
               })}
             </div>
-
-            {/* Logout */}
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-3 mt-4 w-full rounded-lg text-sm font-medium text-gray-500 hover:bg-dark-800 hover:text-white transition-colors border-t border-dark-700 pt-4"
-            >
-              <LogOut size={20} />
-              <span>Logout</span>
-            </button>
           </div>
         </div>
       )}
