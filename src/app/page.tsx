@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Activity, ShoppingBag, Users, Camera, Trophy, MapPin } from 'lucide-react'
-import { GolfCarousel } from '@/components/golf-carousel'
 
 export default function HomePage() {
   return (
@@ -16,7 +15,7 @@ export default function HomePage() {
         <nav className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
           <div className="flex items-center gap-2">
             <span className="text-2xl">&#9971;</span>
-            <span className="text-xl font-bold text-white">Fairway Social</span>
+            <span className="text-xl font-bold text-white">Sleft Golf</span>
           </div>
           <Link href="/feed" className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-emerald-900 hover:bg-emerald-50 transition-colors">
             Jump in
@@ -43,9 +42,6 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Gorgeous Golf Course Carousel */}
-      <GolfCarousel />
-
       {/* Features */}
       <section id="features" className="mx-auto max-w-7xl px-6 py-24">
         <div className="text-center">
@@ -53,7 +49,7 @@ export default function HomePage() {
             Everything you need on the course and off
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-400">
-            Fairway Social brings golfers together with tools designed for how you actually play.
+            Sleft Golf brings golfers together with tools designed for how you actually play.
           </p>
         </div>
 
@@ -112,10 +108,10 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-xl">&#9971;</span>
-              <span className="font-semibold text-white">Fairway Social</span>
+              <span className="font-semibold text-white">Sleft Golf</span>
             </div>
             <p className="text-sm text-gray-500">
-              Open source. Built for golfers, by golfers.
+              Built for golfers, by golfers.
             </p>
           </div>
         </div>

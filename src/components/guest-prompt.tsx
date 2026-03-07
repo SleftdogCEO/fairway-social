@@ -17,7 +17,7 @@ export function GuestPrompt({ onSubmit }: { onSubmit: (name: string) => void }) 
       <div className="bg-dark-800 rounded-2xl border border-dark-700 shadow-2xl w-full max-w-sm p-6">
         <div className="text-center mb-5">
           <span className="text-4xl block mb-2">{"\u26F3"}</span>
-          <h2 className="text-xl font-bold text-white">Welcome to Fairway Social</h2>
+          <h2 className="text-xl font-bold text-white">Welcome to Sleft Golf</h2>
           <p className="text-gray-400 text-sm mt-1">What should we call you?</p>
         </div>
 

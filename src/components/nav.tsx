@@ -53,7 +53,7 @@ export default function Nav() {
             {/* Logo */}
             <Link href="/feed" className="flex items-center gap-2 font-bold text-xl tracking-tight">
               <span className="text-2xl">{"\u26F3"}</span>
-              <span>Fairway Social</span>
+              <span>Sleft Golf</span>
             </Link>
 
             {/* Desktop links */}

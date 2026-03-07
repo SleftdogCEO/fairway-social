@@ -8,7 +8,7 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Fairway Social",
+  title: "Sleft Golf",
   description: "The social network for golfers",
 };
 
