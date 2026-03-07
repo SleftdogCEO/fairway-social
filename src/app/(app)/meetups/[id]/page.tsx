@@ -44,6 +44,7 @@ export default function MatchRoomPage() {
   const [copied, setCopied] = useState<string | null>(null)
   const [countdown, setCountdown] = useState('')
   const [showPlayerEmails, setShowPlayerEmails] = useState(false)
+  const [joining, setJoining] = useState(false)
 
   // Set user from guest profile
   useEffect(() => {
@@ -175,6 +176,32 @@ export default function MatchRoomPage() {
       setNewMessage(content) // restore on error
     }
     setSending(false)
+  }
+
+  // Join meetup
+  async function handleJoin() {
+    if (!user) return
+    setJoining(true)
+    const { error } = await supabase
+      .from('meetup_attendees')
+      .insert({ meetup_id: id, user_id: user.id })
+    if (!error) await fetchMeetup()
+    else console.error('Error joining meetup:', error)
+    setJoining(false)
+  }
+
+  // Leave meetup
+  async function handleLeave() {
+    if (!user) return
+    setJoining(true)
+    const { error } = await supabase
+      .from('meetup_attendees')
+      .delete()
+      .eq('meetup_id', id)
+      .eq('user_id', user.id)
+    if (!error) await fetchMeetup()
+    else console.error('Error leaving meetup:', error)
+    setJoining(false)
   }
 
   // Copy to clipboard
@@ -347,6 +374,42 @@ export default function MatchRoomPage() {
 
             {meetup.description && (
               <p className="text-gray-400 text-sm mt-3 whitespace-pre-wrap">{meetup.description}</p>
+            )}
+
+            {/* Join / Leave button */}
+            {user && !isOver && (
+              <div className="mt-4">
+                {isAttending ? (
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex items-center gap-1.5 text-sm text-emerald-400 font-medium">
+                      <Check className="w-4 h-4" />
+                      You&apos;re in
+                    </span>
+                    <button
+                      onClick={handleLeave}
+                      disabled={joining}
+                      className="text-sm text-gray-500 hover:text-red-400 transition-colors disabled:opacity-50"
+                    >
+                      Leave
+                    </button>
+                  </div>
+                ) : attendees.length < meetup.max_players ? (
+                  <button
+                    onClick={handleJoin}
+                    disabled={joining}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-900/30 disabled:opacity-50"
+                  >
+                    {joining ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Check className="w-5 h-5" />
+                    )}
+                    I&apos;m In
+                  </button>
+                ) : (
+                  <span className="text-sm text-amber-400 font-medium">Group is full</span>
+                )}
+              </div>
             )}
 
             {/* Quick actions */}
